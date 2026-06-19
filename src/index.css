@@ -1,0 +1,125 @@
+@import './styles/tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--obsidian);
+    color: var(--parchment);
+    font-family: theme('fontFamily.sans');
+    letter-spacing: -0.011em;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  /* On-brand focus ring (§10.7): champagne halo offset by background, never default blue */
+  :focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--obsidian), 0 0 0 4px var(--champagne);
+    border-radius: var(--r-input);
+  }
+
+  ::selection {
+    background: rgba(176, 132, 60, 0.22);
+    color: var(--parchment);
+  }
+}
+
+@layer utilities {
+  /* Glass surfaces — used sparingly (tray, detail panel, comparison header) */
+  .glass {
+    background: var(--smoke-glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--line);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Thin, warm scrollbars */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--muted) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    height: 6px;
+    width: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(124, 115, 103, 0.5);
+    border-radius: 999px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* Hide scrollbar entirely for horizontal note rows on mobile */
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Ambient sillage — slow off-center radial drift behind content (§2.5) */
+@keyframes sillage-drift-a {
+  0% {
+    transform: translate3d(-6%, -4%, 0) scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translate3d(8%, 6%, 0) scale(1.18);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(-6%, -4%, 0) scale(1);
+    opacity: 0.7;
+  }
+}
+@keyframes sillage-drift-b {
+  0% {
+    transform: translate3d(5%, 8%, 0) scale(1.1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translate3d(-7%, -6%, 0) scale(1);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate3d(5%, 8%, 0) scale(1.1);
+    opacity: 0.6;
+  }
+}
+@keyframes hero-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Reduced motion: the harness/components also gate via useReducedMotion,
+   but kill the ambient choreography defensively at the CSS layer too. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

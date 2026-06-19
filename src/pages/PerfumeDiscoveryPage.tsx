@@ -1,0 +1,89 @@
+// ============================================================
+// SILLAGE — PerfumeDiscoveryPage (§4.1)
+// Route shell: ambient atmosphere, the three connected acts in
+// a single scroll journey, and the detail-panel portal.
+// ============================================================
+
+import { AnimatePresence } from 'framer-motion';
+import { useDiscovery } from '@/store/discoveryStore';
+import { useActivePerfume, useOrderedPerfumes } from '@/store/selectors';
+import { PERFUME_BY_ID } from '@/data/perfumes';
+import { AmbientBackground } from '@/shared/ui/AmbientBackground';
+import { HeroExperience } from '@/shared/ui/HeroExperience';
+import { SectionReveal } from '@/shared/ui/SectionReveal';
+import { NotesMatchingEngine } from '@/features/discover/NotesMatchingEngine';
+import { FanningCarousel } from '@/features/carousel/FanningCarousel';
+import { ComparisonMatrix } from '@/features/compare/ComparisonMatrix';
+import { PerfumeDetailPanel } from '@/features/detail/PerfumeDetailPanel';
+
+const FEATURED_ID = 'terre-dhermes';
+
+function scrollToId(id: string) {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+export function PerfumeDiscoveryPage() {
+  const ordered = useOrderedPerfumes();
+  const activePerfume = useActivePerfume();
+
+  const closeDetail = useDiscovery((s) => s.closeDetail);
+  const openDetail = useDiscovery((s) => s.openDetail);
+  const setComparisonOriginal = useDiscovery((s) => s.setComparisonOriginal);
+  const setComparisonClone = useDiscovery((s) => s.setComparisonClone);
+
+  const featured = PERFUME_BY_ID[FEATURED_ID];
+
+  const onCompare = (originalId: string, cloneId: string) => {
+    setComparisonOriginal(originalId);
+    setComparisonClone(cloneId);
+    closeDetail();
+    // let the panel exit, then scroll to the comparison act
+    window.setTimeout(() => scrollToId('compare'), 220);
+  };
+
+  return (
+    <div className="relative min-h-screen">
+      <AmbientBackground />
+
+      <main className="relative flex flex-col gap-32 pb-40 sm:gap-40">
+        {featured && <HeroExperience featured={featured} />}
+
+        <SectionReveal>
+          <NotesMatchingEngine />
+        </SectionReveal>
+
+        <SectionReveal>
+          <FanningCarousel perfumes={ordered} />
+        </SectionReveal>
+
+        <SectionReveal>
+          <ComparisonMatrix />
+        </SectionReveal>
+      </main>
+
+      <footer className="relative border-t border-[var(--line)]">
+        <div className="mx-auto flex max-w-[1180px] flex-col gap-3 px-5 py-12 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+          <span className="font-display text-[22px] tracking-[0.04em] text-parchment">
+            SILLAGE
+          </span>
+          <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted">
+            An interactive atlas of scent · Not for sale, only for study
+          </span>
+        </div>
+      </footer>
+
+      {/* detail panel portal (§4.2) */}
+      <AnimatePresence>
+        {activePerfume && (
+          <PerfumeDetailPanel
+            key={activePerfume.id}
+            perfume={activePerfume}
+            onClose={closeDetail}
+            onOpen={openDetail}
+            onCompare={onCompare}
+          />
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}

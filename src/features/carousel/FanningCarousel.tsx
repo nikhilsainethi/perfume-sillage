@@ -1,0 +1,181 @@
+// ============================================================
+// SILLAGE — FanningCarousel (ACT 2, container, §6, §12.5)
+// Reads the ordered matches, computes per-card transforms from
+// activeIndex, and hosts drag + keyboard. Drag lives in Framer
+// gesture state; only the settled activeIndex hits the store.
+// ============================================================
+
+import { useEffect, useRef } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import type { PanInfo } from 'framer-motion';
+import type { Perfume } from '@/domain/types';
+import { useDiscovery } from '@/store/discoveryStore';
+import { useIsDesktop, useIsTablet } from '@/shared/hooks/useMediaQuery';
+import { PerfumeFanCard } from './PerfumeFanCard';
+import { CarouselControls } from './CarouselControls';
+import { CarouselEmptyState } from './CarouselEmptyState';
+
+const DRAG_THRESHOLD = 130; // px per index step
+
+export function FanningCarousel({ perfumes }: { perfumes: Perfume[] }) {
+  const activeIndex = useDiscovery((s) => s.activeIndex);
+  const setActiveIndex = useDiscovery((s) => s.setActiveIndex);
+  const next = useDiscovery((s) => s.next);
+  const prev = useDiscovery((s) => s.prev);
+  const openDetail = useDiscovery((s) => s.openDetail);
+  const setHovered = useDiscovery((s) => s.setHovered);
+  const matchMode = useDiscovery((s) => s.matchMode);
+  const setMatchMode = useDiscovery((s) => s.setMatchMode);
+  const clearNotes = useDiscovery((s) => s.clearNotes);
+
+  const reduce = useReducedMotion() ?? false;
+  const isDesktop = useIsDesktop();
+  const isTablet = useIsTablet();
+  const maxVisible = isDesktop ? 4 : isTablet ? 2 : 1;
+  const variant: 'fan' | 'flat' = reduce || (!isDesktop && !isTablet) ? 'flat' : 'fan';
+
+  const total = perfumes.length;
+  const clamp = (i: number) => Math.max(0, Math.min(i, total - 1));
+
+  // Safety: keep activeIndex inside range when the result set shrinks.
+  useEffect(() => {
+    if (total > 0 && activeIndex > total - 1) setActiveIndex(total - 1);
+  }, [total, activeIndex, setActiveIndex]);
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (total === 0) return;
+    switch (e.key) {
+      case 'ArrowRight':
+        e.preventDefault();
+        setActiveIndex(clamp(activeIndex + 1));
+        break;
+      case 'ArrowLeft':
+        e.preventDefault();
+        setActiveIndex(clamp(activeIndex - 1));
+        break;
+      case 'Home':
+        e.preventDefault();
+        setActiveIndex(0);
+        break;
+      case 'End':
+        e.preventDefault();
+        setActiveIndex(total - 1);
+        break;
+      case 'Enter':
+      case ' ':
+        e.preventDefault();
+        openDetail(perfumes[activeIndex].id);
+        break;
+    }
+  };
+
+  const onDragEnd = (_: unknown, info: PanInfo) => {
+    const distance = -info.offset.x - info.velocity.x * 0.08;
+    const step = Math.round(distance / DRAG_THRESHOLD);
+    if (step !== 0) setActiveIndex(clamp(activeIndex + step));
+  };
+
+  // trackpad horizontal scroll → step through the fan (ignores vertical so
+  // the page still scrolls normally past the carousel)
+  const wheelTs = useRef(0);
+  const onWheel = (e: React.WheelEvent) => {
+    if (total <= 1) return;
+    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+    const now = Date.now();
+    if (now - wheelTs.current < 200) return;
+    wheelTs.current = now;
+    setActiveIndex(clamp(activeIndex + (e.deltaX > 0 ? 1 : -1)));
+  };
+
+  const railRef = useRef<HTMLDivElement>(null);
+  const active = perfumes[activeIndex];
+
+  return (
+    <section
+      id="browse"
+      aria-roledescription="carousel"
+      aria-label="Fragrance carousel"
+      className="relative w-full"
+    >
+      <div className="mx-auto mb-2 max-w-[1180px] px-5 sm:px-8">
+        <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-champagne">
+          Act II — Browse
+        </span>
+        <h2 className="mt-3 max-w-[20ch] font-display text-[clamp(28px,5vw,46px)] leading-[1.07] text-parchment">
+          A fan of bottles, dealt by relevance.
+        </h2>
+      </div>
+
+      <div
+        role="listbox"
+        aria-label="Matching fragrances"
+        tabIndex={-1}
+        onKeyDown={onKeyDown}
+        onWheel={onWheel}
+        className="relative h-[clamp(470px,68vh,640px)] w-full select-none outline-none"
+        style={{ perspective: 2000 }}
+      >
+        <AnimatePresence mode="wait">
+          {total === 0 ? (
+            <div
+              key="empty"
+              className="absolute inset-0 grid place-items-center"
+            >
+              <CarouselEmptyState
+                matchMode={matchMode}
+                onMatchAny={() => setMatchMode('partial')}
+                onClear={clearNotes}
+              />
+            </div>
+          ) : (
+            <motion.div
+              key="rail"
+              ref={railRef}
+              className="relative h-full w-full"
+              style={{ transformStyle: 'preserve-3d' }}
+              drag={total > 1 ? 'x' : false}
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.14}
+              onDragEnd={onDragEnd}
+            >
+              <AnimatePresence initial={false}>
+                {perfumes.map((p, i) => (
+                  <PerfumeFanCard
+                    key={p.id}
+                    perfume={p}
+                    offset={i - activeIndex}
+                    isActive={i === activeIndex}
+                    variant={variant}
+                    maxVisible={maxVisible}
+                    reduce={reduce}
+                    onSelect={() =>
+                      i === activeIndex ? openDetail(p.id) : setActiveIndex(i)
+                    }
+                    onHover={(h) => setHovered(h ? p.id : null)}
+                  />
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {total > 0 && (
+        <div className="mx-auto mt-2 max-w-[1180px] px-5 sm:px-8">
+          <CarouselControls
+            total={total}
+            activeIndex={activeIndex}
+            onPrev={prev}
+            onNext={next}
+            onJump={setActiveIndex}
+          />
+        </div>
+      )}
+
+      {/* screen-reader live region (§6.5) */}
+      <p className="sr-only" aria-live="polite">
+        {active ? `Showing ${active.name} by ${active.brand}, ${activeIndex + 1} of ${total}` : 'No fragrances match'}
+      </p>
+    </section>
+  );
+}

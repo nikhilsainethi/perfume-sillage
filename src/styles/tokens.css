@@ -1,0 +1,59 @@
+/* ============================================================
+   SILLAGE — Design tokens (warm ivory light theme)
+   CSS custom properties consumed by Tailwind utilities and
+   inline styles. The single source of truth for color/space.
+   Token NAMES preserve their semantic role from the original
+   dark system; only the VALUES change for the light theme.
+   ============================================================ */
+
+:root {
+  /* Surfaces — warm ivory base, white raised surfaces */
+  --obsidian: #faf8f4; /* app background base */
+  --espresso: #ffffff; /* raised surface / panels / drawer / dropdown */
+  --smoke: #ffffff; /* card / panel fill */
+  --smoke-glass: rgba(255, 255, 255, 0.72); /* glassmorphic panel */
+
+  /* Text — deep espresso ink on ivory */
+  --parchment: #221c15; /* primary text */
+  --parchment-dim: #6e6456; /* secondary text */
+  --muted: #9a9082; /* tertiary / captions */
+  --ink: #1b1611; /* text on accent fills */
+
+  /* Metallic accent family — deepened for contrast on white */
+  --champagne: #b0843c;
+  --champagne-bright: #8a6526;
+  --amber: #b0702f;
+  --rose-dusk: #b5786e;
+
+  /* Hairlines — warm dark at low alpha on light */
+  --line: rgba(34, 28, 21, 0.1);
+  --line-strong: rgba(34, 28, 21, 0.16);
+
+  /* Soft gold tints for active fills */
+  --gold-tint: rgba(176, 132, 60, 0.14);
+  --gold-tint-soft: rgba(176, 132, 60, 0.08);
+
+  /* Accord families (deepened so they read on white) */
+  --acc-citrus: #c9a53c;
+  --acc-fresh: #5e9e86;
+  --acc-floral: #c77e92;
+  --acc-woody: #9a6b45;
+  --acc-spicy: #c2542a;
+  --acc-sweet: #c98a3d;
+  --acc-aromatic: #6b9156;
+  --acc-amber: #b5803f;
+  --acc-leather: #7a4a3a;
+
+  /* Radius */
+  --r-chip: 999px;
+  --r-card: 20px;
+  --r-panel: 28px;
+  --r-input: 12px;
+
+  /* Elevation — soft, warm, lifted off ivory (never heavy black) */
+  --e-1: 0 1px 2px rgba(60, 45, 30, 0.06), 0 1px 3px rgba(60, 45, 30, 0.05);
+  --e-2: 0 8px 24px rgba(60, 45, 30, 0.09), 0 2px 6px rgba(60, 45, 30, 0.05);
+  --e-3: 0 24px 60px rgba(60, 45, 30, 0.14), 0 0 40px rgba(176, 132, 60, 0.08);
+
+  color-scheme: light;
+}
