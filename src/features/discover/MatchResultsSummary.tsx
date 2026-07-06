@@ -5,7 +5,9 @@
 // ============================================================
 
 import { motion } from 'framer-motion';
+import type { AccordFamily } from '@/domain/types';
 import type { MatchMode, TypeFilter } from '@/store/discoveryStore';
+import { FAMILY_COLOR, FAMILY_LABEL, FAMILY_ORDER } from '@/data/notes';
 import { AnimatedNumber } from '@/shared/ui/AnimatedNumber';
 
 interface SegOption<T extends string> {
@@ -64,18 +66,22 @@ export function MatchResultsSummary({
   matchMode,
   typeFilter,
   linkClones,
+  selectedAccords,
   onMatchMode,
   onTypeFilter,
   onToggleLink,
+  onToggleAccord,
 }: {
   total: number;
   exactCount: number;
   matchMode: MatchMode;
   typeFilter: TypeFilter;
   linkClones: boolean;
+  selectedAccords: AccordFamily[];
   onMatchMode: (m: MatchMode) => void;
   onTypeFilter: (t: TypeFilter) => void;
   onToggleLink: () => void;
+  onToggleAccord: (f: AccordFamily) => void;
 }) {
   return (
     <div className="flex flex-col gap-5">
@@ -140,6 +146,36 @@ export function MatchResultsSummary({
           />
           Link pairs
         </button>
+      </div>
+
+      {/* olfactive family filter — results must carry every chosen family */}
+      <div className="flex flex-col gap-2">
+        <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
+          Families
+        </span>
+        <div className="flex flex-wrap gap-1.5" role="group" aria-label="Filter by olfactive family">
+          {FAMILY_ORDER.map((family) => {
+            const active = selectedAccords.includes(family);
+            const color = FAMILY_COLOR[family];
+            return (
+              <button
+                key={family}
+                type="button"
+                aria-pressed={active}
+                onClick={() => onToggleAccord(family)}
+                className="inline-flex items-center gap-1.5 rounded-chip border px-2.5 py-1 font-sans text-[11.5px] outline-none transition-all"
+                style={{
+                  borderColor: active ? color : 'var(--line)',
+                  background: active ? `${color}1F` : 'transparent',
+                  color: active ? color : '#6E6456',
+                }}
+              >
+                <span className="h-1.5 w-1.5 rounded-full" style={{ background: color }} />
+                {FAMILY_LABEL[family]}
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

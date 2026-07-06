@@ -251,7 +251,7 @@ for (const r of rows) {
   if (!house) continue;
   const rc = Number(r.Rating_Count);
   const rv = Number(r.Rating_Value);
-  if (!(rc >= 300) || !(rv >= 6)) continue;
+  if (!(rc >= 150) || !(rv >= 6)) continue;
   if ([r.Top_Notes, r.Middle_Notes, r.Base_Notes].some((x) => !x || x === 'NA')) continue;
 
   const year = /^\d{4}$/.test(r.Release_Year) ? Number(r.Release_Year) : undefined;
@@ -291,7 +291,7 @@ for (const c of candidates) {
   seen.add(c.key);
   perBrand.set(c.house, n + 1);
   picked.push(c);
-  if (picked.length >= 150) break;
+  if (picked.length >= 250) break;
 }
 
 // ---------- derive perf + desc ----------

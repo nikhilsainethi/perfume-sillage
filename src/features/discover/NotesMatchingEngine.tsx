@@ -41,6 +41,8 @@ export function NotesMatchingEngine() {
   const setTypeFilter = useDiscovery((s) => s.setTypeFilter);
   const linkClones = useDiscovery((s) => s.linkClones);
   const toggleLinkClones = useDiscovery((s) => s.toggleLinkClones);
+  const selectedAccords = useDiscovery((s) => s.selectedAccords);
+  const toggleAccord = useDiscovery((s) => s.toggleAccord);
 
   const total = useMatches().length;
   const exactCount = useExactCount();
@@ -185,9 +187,11 @@ export function NotesMatchingEngine() {
             matchMode={matchMode}
             typeFilter={typeFilter}
             linkClones={linkClones}
+            selectedAccords={selectedAccords}
             onMatchMode={setMatchMode}
             onTypeFilter={setTypeFilter}
             onToggleLink={toggleLinkClones}
+            onToggleAccord={toggleAccord}
           />
         </div>
       </div>

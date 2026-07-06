@@ -58,11 +58,12 @@ export function ComparisonMatrix() {
           id="compare-title"
           className="max-w-[20ch] font-display text-[clamp(32px,6vw,52px)] leading-[1.05] text-parchment"
         >
-          Read where the interpretation lands, and where it drifts.
+          Read where two scents meet, and where they drift.
         </h2>
         <p className="max-w-[54ch] font-sans text-[16px] leading-relaxed text-parchment-dim">
-          Pair an original with its inspired counterpart. Matching notes are drawn
-          together; the radar shows how the two perform. The story is visual first.
+          Pair any two scents in the atlas — an original with its interpretation, a
+          flanker with its parent, or two rivals. Matching notes are drawn together;
+          the radar shows how they perform. The story is visual first.
         </p>
       </header>
 
