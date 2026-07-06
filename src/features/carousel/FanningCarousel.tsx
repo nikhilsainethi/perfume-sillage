@@ -139,21 +139,25 @@ export function FanningCarousel({ perfumes }: { perfumes: Perfume[] }) {
               onDragEnd={onDragEnd}
             >
               <AnimatePresence initial={false}>
-                {perfumes.map((p, i) => (
-                  <PerfumeFanCard
-                    key={p.id}
-                    perfume={p}
-                    offset={i - activeIndex}
-                    isActive={i === activeIndex}
-                    variant={variant}
-                    maxVisible={maxVisible}
-                    reduce={reduce}
-                    onSelect={() =>
-                      i === activeIndex ? openDetail(p.id) : setActiveIndex(i)
-                    }
-                    onHover={(h) => setHovered(h ? p.id : null)}
-                  />
-                ))}
+                {perfumes.map((p, i) =>
+                  // window: with a large catalog, only mount cards near the
+                  // active index (they're invisible beyond maxVisible anyway)
+                  Math.abs(i - activeIndex) <= maxVisible + 6 ? (
+                    <PerfumeFanCard
+                      key={p.id}
+                      perfume={p}
+                      offset={i - activeIndex}
+                      isActive={i === activeIndex}
+                      variant={variant}
+                      maxVisible={maxVisible}
+                      reduce={reduce}
+                      onSelect={() =>
+                        i === activeIndex ? openDetail(p.id) : setActiveIndex(i)
+                      }
+                      onHover={(h) => setHovered(h ? p.id : null)}
+                    />
+                  ) : null,
+                )}
               </AnimatePresence>
             </motion.div>
           )}

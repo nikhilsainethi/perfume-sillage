@@ -966,6 +966,16 @@ export const RAW: RawPerfume[] = [
     desc: 'Boozy spiced rum over a soft leather-and-tuberose — sweet, ambery and grown-up. A cozy evening signature.',
   },
 
+  {
+    id: 'cool-water', name: 'Cool Water', brand: 'Davidoff', house: 'Zino Davidoff', perfumer: 'Pierre Bourdon',
+    type: 'original', year: 1988, gender: 'masculine', conc: 'edt',
+    top: ['green-notes', 'lavender', 'mint', 'rosemary', 'coriander'],
+    heart: ['geranium', 'neroli', 'sandalwood', 'jasmine'],
+    base: ['cedar', 'oakmoss', 'musk', 'amber', 'tobacco'],
+    perf: [6, 6, 6], seasons: ['spring', 'summer'],
+    desc: 'The aquatic-fougère archetype — icy lavender-mint over oakmoss, musk and a whisper of tobacco. 1988, and still the smell of cold sea air.',
+  },
+
   // ---- expansion dupes ----
   {
     id: 'afnan-9pm', name: '9PM', brand: 'Afnan', type: 'clone', year: 2020, gender: 'masculine', conc: 'edp',

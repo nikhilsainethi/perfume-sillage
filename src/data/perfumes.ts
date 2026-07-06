@@ -15,6 +15,7 @@ import type {
 import { deriveAccords } from '@/domain/derive';
 import { NOTES, FAMILY_COLOR } from './notes';
 import { RAW, type RawPerfume } from './catalogData';
+import { IMPORTED } from './catalogImported';
 import { PHOTO_IDS } from './photoIds';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -70,7 +71,7 @@ function build(raw: RawPerfume): Perfume {
   };
 }
 
-export const PERFUMES: Perfume[] = RAW.map(build);
+export const PERFUMES: Perfume[] = [...RAW, ...IMPORTED].map(build);
 
 export const PERFUME_BY_ID: Record<string, Perfume> = Object.fromEntries(
   PERFUMES.map((p) => [p.id, p]),

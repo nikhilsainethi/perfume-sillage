@@ -15,7 +15,9 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '..');
 
 const { NOTES } = await import(join(root, 'src/data/notes.ts'));
-const { RAW } = await import(join(root, 'src/data/catalogData.ts'));
+const { RAW: CURATED } = await import(join(root, 'src/data/catalogData.ts'));
+const { IMPORTED } = await import(join(root, 'src/data/catalogImported.ts'));
+const RAW = [...CURATED, ...IMPORTED];
 
 const errors = [];
 const warnings = [];
