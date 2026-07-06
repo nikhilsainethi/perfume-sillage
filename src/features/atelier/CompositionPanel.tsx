@@ -39,6 +39,7 @@ export function CompositionPanel({ draftPerfume }: { draftPerfume: Perfume }) {
 
   const [savedFlash, setSavedFlash] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [dragOverTier, setDragOverTier] = useState<NotePosition | null>(null);
   const count = draft.pyramid.top.length + draft.pyramid.heart.length + draft.pyramid.base.length;
 
   const onSave = () => {
@@ -111,10 +112,36 @@ export function CompositionPanel({ draftPerfume }: { draftPerfume: Perfume }) {
         })}
       </div>
 
-      {/* the pyramid */}
+      {/* the pyramid — rows are draggable between tiers (buttons remain the
+          accessible path); a hovered tier glows as a drop target */}
       <div className="mt-6 flex flex-col gap-5">
         {TIERS.map((tier) => (
-          <div key={tier}>
+          <div
+            key={tier}
+            onDragOver={(e) => {
+              if (e.dataTransfer.types.includes('text/sillage-note')) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                if (dragOverTier !== tier) setDragOverTier(tier);
+              }
+            }}
+            onDragLeave={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                setDragOverTier((t) => (t === tier ? null : t));
+              }
+            }}
+            onDrop={(e) => {
+              e.preventDefault();
+              const id = e.dataTransfer.getData('text/sillage-note');
+              if (id) setNoteTier(id, tier);
+              setDragOverTier(null);
+            }}
+            className="rounded-[16px] p-1.5 transition-colors"
+            style={{
+              background: dragOverTier === tier ? 'rgba(176,132,60,0.10)' : 'transparent',
+              outline: dragOverTier === tier ? '1.5px dashed rgba(176,132,60,0.5)' : 'none',
+            }}
+          >
             <div className="mb-2 flex items-baseline justify-between">
               <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-champagne">
                 {TIER_LABEL[tier]}
@@ -144,7 +171,18 @@ export function CompositionPanel({ draftPerfume }: { draftPerfume: Perfume }) {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.95 }}
                       transition={spring.chip}
-                      className="flex items-center gap-3 rounded-input border border-[var(--line)] bg-white/80 px-3 py-2"
+                    >
+                    {/* native HTML5 drag lives on a plain div — framer-motion
+                        reserves onDragStart/onDragEnd for its own gestures */}
+                    <div
+                      draggable
+                      onDragStart={(e) => {
+                        e.dataTransfer.setData('text/sillage-note', ref.noteId);
+                        e.dataTransfer.effectAllowed = 'move';
+                      }}
+                      onDragEnd={() => setDragOverTier(null)}
+                      title="Drag to another tier"
+                      className="flex cursor-grab items-center gap-3 rounded-input border border-[var(--line)] bg-white/80 px-3 py-2 active:cursor-grabbing"
                     >
                       <span
                         className="h-2.5 w-2.5 shrink-0 rounded-full"
@@ -192,6 +230,7 @@ export function CompositionPanel({ draftPerfume }: { draftPerfume: Perfume }) {
                       >
                         ×
                       </button>
+                    </div>
                     </motion.div>
                   );
                 })}

@@ -5,13 +5,14 @@
 // trapped; Esc and backdrop close. Portaled above everything.
 // ============================================================
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import type { Perfume } from '@/domain/types';
 import { NOTES } from '@/data/notes';
-import { PERFUME_BY_ID } from '@/data/perfumes';
+import { PERFUMES, PERFUME_BY_ID } from '@/data/perfumes';
 import { LINES } from '@/data/lines';
+import { compare } from '@/domain/comparison';
 import { useIsMobile } from '@/shared/hooks/useMediaQuery';
 import { useFocusTrap } from '@/shared/hooks/useFocusTrap';
 import { spring } from '@/shared/motion/motion';
@@ -62,6 +63,16 @@ export function PerfumeDetailPanel({
 }) {
   const isMobile = useIsMobile();
   const trapRef = useFocusTrap<HTMLDivElement>(true, onClose);
+
+  // scent twins: the whole atlas ranked against this perfume
+  const twins = useMemo(
+    () =>
+      PERFUMES.filter((p) => p.id !== perfume.id)
+        .map((p) => ({ p, overall: compare(perfume, p, NOTES).similarity.overall }))
+        .sort((a, b) => b.overall - a.overall)
+        .slice(0, 5),
+    [perfume],
+  );
 
   // lock body scroll while open
   useEffect(() => {
@@ -231,6 +242,53 @@ export function PerfumeDetailPanel({
               </Section>
             );
           })()}
+
+          {/* scent twins — nearest neighbors in the whole atlas */}
+          {twins.length > 0 && (
+            <Section title="Scent twins">
+              <ul className="flex flex-col gap-2">
+                {twins.map(({ p, overall }) => (
+                  <li
+                    key={p.id}
+                    className="flex items-center gap-3 rounded-input border border-[var(--line)] bg-white/80 px-3 py-2"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => onOpen(p.id)}
+                      className="flex min-w-0 flex-1 items-center gap-3 text-left outline-none"
+                      aria-label={`Open ${p.name}`}
+                    >
+                      <span className="h-11 w-8 shrink-0 overflow-hidden rounded-[7px]">
+                        <BottleVisual perfume={p} variant="thumb" />
+                      </span>
+                      <span className="min-w-0">
+                        <span className="flex items-center gap-2">
+                          <span className="truncate font-display text-[16px] leading-tight text-parchment">
+                            {p.name}
+                          </span>
+                          {p.type === 'clone' && <OriginalCloneBadge type="clone" />}
+                        </span>
+                        <span className="block truncate font-sans text-[12px] text-parchment-dim">
+                          {p.brand}
+                        </span>
+                      </span>
+                    </button>
+                    <span className="shrink-0 font-display text-[19px] text-champagne">
+                      {overall}
+                      <span className="ml-0.5 font-sans text-[10px] text-muted">%</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => onCompare(perfume.id, p.id)}
+                      className="shrink-0 rounded-chip border border-[var(--line)] px-3 py-1.5 font-sans text-[11.5px] text-parchment-dim outline-none transition-colors hover:border-champagne hover:text-champagne-bright"
+                    >
+                      Compare
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </Section>
+          )}
 
           {/* note count footnote */}
           <p className="font-mono text-[11px] text-muted">
