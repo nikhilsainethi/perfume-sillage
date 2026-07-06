@@ -2,17 +2,18 @@
 
 A premium discovery, cataloging, and comparison tool for fragrance enthusiasts — an interactive editorial portfolio for *reading the trail a fragrance leaves behind*. Not an e-commerce site: no prices, no carts, just three connected acts — **Discover, Browse, Compare** — driven by one shared filter state.
 
-> Warm-ivory editorial light theme · 127 scents (100 originals + 27 inspired "dupes") · note-matching engine · cinematic fanning carousel · original↔inspired comparison map.
+> Warm-ivory editorial light theme · 127 scents (100 originals + 27 inspired "dupes") · note-matching engine · cinematic fanning carousel · original↔inspired comparison map · **a WebGL note constellation and a full composition studio**.
 
-## The three acts
+## The four acts
 
-1. **Discover — the Notes Engine.** Compose a scent profile from a radial **fragrance wheel** (notes segmented by accord family). Results rank live by olfactory relevance — a note in the *heart* counts for more than one that merely flickers on *top*.
+1. **Discover — the Notes Engine.** Compose a scent profile from an orbitable **3D note constellation** (WebGL, capability-gated) or the radial 2D fragrance wheel. Results rank live by olfactory relevance — a note in the *heart* counts for more than one that merely flickers on *top*.
 2. **Browse — the Fanning Carousel.** Matching perfumes arrange into a 3D fan of bottles. Click a side card to glide it to centre, drag/swipe, trackpad-scroll, or use the arrows; click the active card to open its full profile.
 3. **Compare — the Olfactory Matrix.** Pair an **Original** with an **Inspired** counterpart. Matching notes are physically connected with drawn bézier lines across two pyramids, a radar overlays the two performance profiles, and a restrained similarity reading tells you *where the interpretation lands and where it drifts*.
+4. **The Atelier — compose your own** (`/#/atelier`). Pull notes from the constellation into a living top/heart/base pyramid with per-note intensity. The atlas reads your blend live: an editorial character line, accord profile, projected performance, seasons, **harmony guidance learned from the catalog itself** (pair affinities + balance cautions), and *your place in the atlas* — nearest real scents with a full one-click comparison. Bottle creations to **My Shelf** (`/#/shelf`, persisted locally, export/import) and **share them as links** (`/#/c/<code>` — the URL is the database, no backend).
 
 ## Stack
 
-React 18 · TypeScript · Vite · Tailwind CSS v3 · Framer Motion · Zustand
+React 18 · TypeScript · Vite · Tailwind CSS v3 · Framer Motion · Zustand · Three.js (react-three-fiber, lazy-loaded & capability-gated) · react-router · lz-string · Vitest
 
 ## Architecture
 

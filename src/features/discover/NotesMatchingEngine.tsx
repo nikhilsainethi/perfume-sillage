@@ -5,19 +5,29 @@
 // memoized selectors.
 // ============================================================
 
-import { useMemo, useState } from 'react';
+import { Suspense, lazy, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useDiscovery } from '@/store/discoveryStore';
 import { useMatches, useExactCount } from '@/store/selectors';
 import { NOTES_LIST, WHEEL_NOTES } from '@/data/notes';
 import { useIsMobile } from '@/shared/hooks/useMediaQuery';
+import { useWebGLCapability } from '@/shared/webgl/useWebGLCapability';
 import { ease } from '@/shared/motion/motion';
 import { FragranceWheel } from './FragranceWheel';
 import { NoteSelector } from './NoteSelector';
 import { SelectedNotesTray } from './SelectedNotesTray';
 import { MatchResultsSummary } from './MatchResultsSummary';
 
-type ViewMode = 'wheel' | 'cluster';
+const NoteConstellation = lazy(
+  () => import('@/features/atelier/constellation/NoteConstellation'),
+);
+
+type ViewMode = 'orbit' | 'wheel' | 'cluster';
+const VIEW_LABEL: Record<ViewMode, string> = {
+  orbit: 'Orbit',
+  wheel: 'Wheel',
+  cluster: 'List',
+};
 
 export function NotesMatchingEngine() {
   const selectedNoteIds = useDiscovery((s) => s.selectedNoteIds);
@@ -36,8 +46,14 @@ export function NotesMatchingEngine() {
   const exactCount = useExactCount();
 
   const isMobile = useIsMobile();
-  const [viewMode, setViewMode] = useState<ViewMode>('wheel');
-  const effectiveView: ViewMode = isMobile ? 'cluster' : viewMode;
+  const canRender3D = useWebGLCapability();
+  const [viewMode, setViewMode] = useState<ViewMode | null>(null);
+  const effectiveView: ViewMode = isMobile
+    ? 'cluster'
+    : viewMode ?? (canRender3D ? 'orbit' : 'wheel');
+  const viewOptions: ViewMode[] = canRender3D
+    ? ['orbit', 'wheel', 'cluster']
+    : ['wheel', 'cluster'];
 
   const selectedNotes = useMemo(
     () =>
@@ -89,7 +105,7 @@ export function NotesMatchingEngine() {
                 aria-label="Selector view"
                 className="inline-flex rounded-chip border border-[var(--line)] bg-[#FFFFFF] p-0.5"
               >
-                {(['wheel', 'cluster'] as ViewMode[]).map((mode) => {
+                {viewOptions.map((mode) => {
                   const active = effectiveView === mode;
                   return (
                     <button
@@ -98,7 +114,7 @@ export function NotesMatchingEngine() {
                       role="radio"
                       aria-checked={active}
                       onClick={() => setViewMode(mode)}
-                      className="relative rounded-chip px-3.5 py-1.5 font-sans text-[12px] capitalize outline-none transition-colors"
+                      className="relative rounded-chip px-3.5 py-1.5 font-sans text-[12px] outline-none transition-colors"
                       style={{ color: active ? '#1B1611' : '#6E6456' }}
                     >
                       {active && (
@@ -109,9 +125,7 @@ export function NotesMatchingEngine() {
                           transition={{ type: 'spring', stiffness: 320, damping: 30 }}
                         />
                       )}
-                      <span className="relative z-10">
-                        {mode === 'wheel' ? 'Wheel' : 'List'}
-                      </span>
+                      <span className="relative z-10">{VIEW_LABEL[mode]}</span>
                     </button>
                   );
                 })}
@@ -125,7 +139,24 @@ export function NotesMatchingEngine() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.42, ease: ease.enter }}
           >
-            {effectiveView === 'wheel' ? (
+            {effectiveView === 'orbit' ? (
+              <Suspense
+                fallback={
+                  <div className="grid h-[520px] w-full place-items-center rounded-panel border border-[var(--line)]">
+                    <span className="animate-pulse font-mono text-[11px] uppercase tracking-[0.2em] text-muted">
+                      Gathering the constellation…
+                    </span>
+                  </div>
+                }
+              >
+                <NoteConstellation
+                  notes={WHEEL_NOTES}
+                  selectedIds={selectedNoteIds}
+                  onToggle={toggleNote}
+                  height={520}
+                />
+              </Suspense>
+            ) : effectiveView === 'wheel' ? (
               <FragranceWheel
                 notes={WHEEL_NOTES}
                 selectedIds={selectedNoteIds}

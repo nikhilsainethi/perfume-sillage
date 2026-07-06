@@ -6,6 +6,7 @@
 // ============================================================
 
 import { motion, useReducedMotion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import type { Perfume } from '@/domain/types';
 import { ease } from '@/shared/motion/motion';
 import { OriginalCloneBadge } from './OriginalCloneBadge';
@@ -56,22 +57,21 @@ export function HeroExperience({ featured }: { featured: Perfume }) {
           </motion.p>
 
           <motion.div {...rise(0.55)} className="flex flex-wrap items-center gap-4 pt-2">
+            <Link
+              to="/atelier"
+              className="group inline-flex items-center gap-2.5 rounded-chip bg-champagne px-6 py-3 font-sans text-[14px] font-medium text-ink outline-none transition-colors hover:bg-champagne-bright hover:text-white"
+            >
+              Compose your own scent
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden className="transition-transform group-hover:translate-x-0.5">
+                <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </Link>
             <button
               type="button"
               onClick={() => scrollToId('discover')}
-              className="group inline-flex items-center gap-2.5 rounded-chip bg-champagne px-6 py-3 font-sans text-[14px] font-medium text-obsidian outline-none transition-colors hover:bg-champagne-bright"
-            >
-              Compose a scent
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden className="transition-transform group-hover:translate-y-0.5">
-                <path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-            <button
-              type="button"
-              onClick={() => scrollToId('compare')}
               className="rounded-chip border border-[var(--line)] px-6 py-3 font-sans text-[14px] text-parchment-dim outline-none transition-colors hover:border-champagne hover:text-champagne-bright"
             >
-              Compare two scents
+              Explore the atlas
             </button>
           </motion.div>
         </div>

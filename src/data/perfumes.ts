@@ -6,14 +6,13 @@
 // ============================================================
 
 import type {
-  Accord,
-  AccordFamily,
   NotePosition,
   NotePyramid,
   NoteRef,
   Perfume,
   SeasonMood,
 } from '@/domain/types';
+import { deriveAccords } from '@/domain/derive';
 import { NOTES, FAMILY_COLOR } from './notes';
 import { RAW, type RawPerfume } from './catalogData';
 import { PHOTO_IDS } from './photoIds';
@@ -31,26 +30,6 @@ function layerRefs(ids: string[], pos: NotePosition): NoteRef[] {
   }));
 }
 
-// Accords are the overall character; heart & base weigh a touch more than top.
-const POS_WEIGHT: Record<NotePosition, number> = { top: 0.8, heart: 1.0, base: 0.95 };
-
-function deriveAccords(pyramid: NotePyramid): Accord[] {
-  const tally = new Map<AccordFamily, number>();
-  (['top', 'heart', 'base'] as NotePosition[]).forEach((pos) => {
-    for (const ref of pyramid[pos]) {
-      const fam = NOTES[ref.noteId]?.family;
-      if (!fam) continue;
-      tally.set(fam, (tally.get(fam) ?? 0) + ref.intensity * POS_WEIGHT[pos]);
-    }
-  });
-  const total = [...tally.values()].reduce((a, b) => a + b, 0) || 1;
-  return [...tally.entries()]
-    .map(([family, w]) => ({ family, weight: w / total }))
-    .sort((a, b) => b.weight - a.weight)
-    .filter((a) => a.weight >= 0.04)
-    .slice(0, 6);
-}
-
 const DEFAULT_SEASONS: SeasonMood['seasons'] = ['spring', 'autumn'];
 
 function build(raw: RawPerfume): Perfume {
@@ -59,7 +38,7 @@ function build(raw: RawPerfume): Perfume {
     heart: layerRefs(raw.heart, 'heart'),
     base: layerRefs(raw.base, 'base'),
   };
-  const accords = deriveAccords(pyramid);
+  const accords = deriveAccords(pyramid, NOTES);
   const accent = FAMILY_COLOR[accords[0]?.family ?? 'amber'];
 
   return {

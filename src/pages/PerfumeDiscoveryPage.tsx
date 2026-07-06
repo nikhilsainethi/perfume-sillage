@@ -8,7 +8,6 @@ import { AnimatePresence } from 'framer-motion';
 import { useDiscovery } from '@/store/discoveryStore';
 import { useActivePerfume, useOrderedPerfumes } from '@/store/selectors';
 import { PERFUME_BY_ID } from '@/data/perfumes';
-import { AmbientBackground } from '@/shared/ui/AmbientBackground';
 import { HeroExperience } from '@/shared/ui/HeroExperience';
 import { SectionReveal } from '@/shared/ui/SectionReveal';
 import { NotesMatchingEngine } from '@/features/discover/NotesMatchingEngine';
@@ -42,9 +41,7 @@ export function PerfumeDiscoveryPage() {
   };
 
   return (
-    <div className="relative min-h-screen">
-      <AmbientBackground />
-
+    <div className="relative">
       <main className="relative flex flex-col gap-32 pb-40 sm:gap-40">
         {featured && <HeroExperience featured={featured} />}
 
