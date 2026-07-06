@@ -1,5 +1,7 @@
 # SILLAGE — An Atlas of Scent
 
+**Live: [nikhilsainethi.github.io/perfume-sillage](https://nikhilsainethi.github.io/perfume-sillage/)**
+
 A premium discovery, cataloging, and comparison tool for fragrance enthusiasts — an interactive editorial portfolio for *reading the trail a fragrance leaves behind*. Not an e-commerce site: no prices, no carts, just three connected acts — **Discover, Browse, Compare** — driven by one shared filter state.
 
 > Warm-ivory editorial light theme · 378 scents (351 originals + 27 inspired "dupes") across ~50 houses · note-matching engine · cinematic fanning carousel · original↔inspired comparison map · **a WebGL note constellation and a full composition studio**.
