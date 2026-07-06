@@ -5,10 +5,10 @@
 // compare() so they can never drift from the comparison engine.
 // ============================================================
 
-import type { CloneRelationship } from '@/domain/types';
-import { compare } from '@/domain/comparison';
-import { NOTES } from './notes';
-import { PERFUMES, PERFUME_BY_ID } from './perfumes';
+import type { CloneRelationship } from '../domain/types.ts';
+import { compare } from '../domain/comparison.ts';
+import { NOTES } from './notes.ts';
+import { PERFUMES, PERFUME_BY_ID } from './perfumes.ts';
 
 export const RELATIONSHIPS: CloneRelationship[] = PERFUMES.filter(
   (p) => p.type === 'clone' && p.inspiredByOriginalId,

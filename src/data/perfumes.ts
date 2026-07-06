@@ -11,12 +11,12 @@ import type {
   NoteRef,
   Perfume,
   SeasonMood,
-} from '@/domain/types';
-import { deriveAccords } from '@/domain/derive';
-import { NOTES, FAMILY_COLOR } from './notes';
-import { RAW, type RawPerfume } from './catalogData';
-import { IMPORTED } from './catalogImported';
-import { PHOTO_IDS } from './photoIds';
+} from '../domain/types.ts';
+import { deriveAccords } from '../domain/derive.ts';
+import { NOTES, FAMILY_COLOR } from './notes.ts';
+import { RAW, type RawPerfume } from './catalogData.ts';
+import { IMPORTED } from './catalogImported.ts';
+import { PHOTO_IDS } from './photoIds.ts';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 

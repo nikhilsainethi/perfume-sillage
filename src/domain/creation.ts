@@ -12,8 +12,8 @@ import type {
   NotePyramid,
   NoteRef,
   Perfume,
-} from './types';
-import { deriveAccords, derivePerformance, deriveSeasons } from './derive';
+} from './types.ts';
+import { deriveAccords, derivePerformance, deriveSeasons } from './derive.ts';
 
 export interface UserCreation {
   id: string; // 'crn-...'

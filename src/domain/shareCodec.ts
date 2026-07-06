@@ -9,7 +9,7 @@ import {
   compressToEncodedURIComponent,
   decompressFromEncodedURIComponent,
 } from 'lz-string';
-import type { FragranceNote, NotePyramid, NoteRef } from './types';
+import type { FragranceNote, NotePyramid, NoteRef } from './types.ts';
 
 const clamp01 = (v: number) => Math.max(0.05, Math.min(1, v));
 

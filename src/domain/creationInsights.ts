@@ -5,7 +5,7 @@
 //  nocturnal, cold-weather."
 // ============================================================
 
-import type { Accord, AccordFamily, FragranceNote, NotePyramid, Season } from './types';
+import type { Accord, AccordFamily, FragranceNote, NotePyramid, Season } from './types.ts';
 
 const FAMILY_WORD: Record<AccordFamily, string> = {
   citrus: 'citrus',

@@ -6,8 +6,8 @@
 // composition produce "cautions". No hand-authored data.
 // ============================================================
 
-import type { FragranceNote, NotePyramid, Perfume } from './types';
-import { TIER_CAP, allRefs } from './creation';
+import type { FragranceNote, NotePyramid, Perfume } from './types.ts';
+import { TIER_CAP, allRefs } from './creation.ts';
 
 export interface Spark {
   a: string; // note id

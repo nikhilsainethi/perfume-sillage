@@ -15,7 +15,7 @@ import type {
   NoteRef,
   Perfume,
   RadarAxis,
-} from './types';
+} from './types.ts';
 
 // Families that read "warm" vs "fresh" on skin — used for radar axes.
 const WARM_FAMILIES: AccordFamily[] = ['amber', 'sweet', 'spicy', 'woody', 'leather'];

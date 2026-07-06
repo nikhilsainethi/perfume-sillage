@@ -4,7 +4,7 @@
 // filters; it dispatches toggles and renders this output.
 // ============================================================
 
-import type { Perfume, FragranceNote, NoteMatch, NotePosition } from './types';
+import type { Perfume, FragranceNote, NoteMatch, NotePosition } from './types.ts';
 
 // Heart defines character, base lingers, top is fleeting (§5.2).
 const POSITION_WEIGHT: Record<NotePosition, number> = {

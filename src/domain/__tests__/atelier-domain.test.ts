@@ -3,13 +3,13 @@
 // ============================================================
 
 import { describe, expect, it } from 'vitest';
-import type { NotePyramid } from '../types';
-import { toPerfume, emptyPyramid, tierOf } from '../creation';
-import { deriveAccords, derivePerformance, deriveSeasons } from '../derive';
-import { buildHarmonyModel, cautionsFor } from '../harmony';
-import { encodeCreation, decodeCreation } from '../shareCodec';
-import { characterLine } from '../creationInsights';
-import { compare } from '../comparison';
+import type { NotePyramid } from '../types.ts';
+import { toPerfume, emptyPyramid, tierOf } from '../creation.ts';
+import { deriveAccords, derivePerformance, deriveSeasons } from '../derive.ts';
+import { buildHarmonyModel, cautionsFor } from '../harmony.ts';
+import { encodeCreation, decodeCreation } from '../shareCodec.ts';
+import { characterLine } from '../creationInsights.ts';
+import { compare } from '../comparison.ts';
 import { NOTES, FAMILY_COLOR } from '../../data/notes';
 import { PERFUMES, PERFUME_BY_ID } from '../../data/perfumes';
 

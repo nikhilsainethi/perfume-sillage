@@ -6,7 +6,7 @@
 // every note is still available in the List view and matching.
 // ============================================================
 
-import type { AccordFamily, FragranceNote } from '@/domain/types';
+import type { AccordFamily, FragranceNote } from '../domain/types.ts';
 
 /** Accord family -> accent. Deepened so colors read on warm ivory. */
 export const FAMILY_COLOR: Record<AccordFamily, string> = {

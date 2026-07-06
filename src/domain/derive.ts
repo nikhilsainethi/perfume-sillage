@@ -14,7 +14,7 @@ import type {
   NotePyramid,
   PerformanceProfile,
   Season,
-} from './types';
+} from './types.ts';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 

@@ -9,6 +9,7 @@ import { useAtelier } from '@/store/atelierStore';
 
 const LINKS = [
   { to: '/', label: 'Atlas', end: true },
+  { to: '/houses', label: 'Houses', end: false },
   { to: '/atelier', label: 'Atelier', end: false },
   { to: '/shelf', label: 'My Shelf', end: false },
 ];

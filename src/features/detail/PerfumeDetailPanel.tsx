@@ -10,6 +10,8 @@ import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import type { Perfume } from '@/domain/types';
 import { NOTES } from '@/data/notes';
+import { PERFUME_BY_ID } from '@/data/perfumes';
+import { LINES } from '@/data/lines';
 import { useIsMobile } from '@/shared/hooks/useMediaQuery';
 import { useFocusTrap } from '@/shared/hooks/useFocusTrap';
 import { spring } from '@/shared/motion/motion';
@@ -198,6 +200,37 @@ export function PerfumeDetailPanel({
           )}
 
           <InspiredByLink perfume={perfume} onOpen={onOpen} onCompare={onCompare} />
+
+          {/* fragrance line — detected from the data itself */}
+          {(() => {
+            const line = LINES.get(perfume.id);
+            if (!line) return null;
+            const siblings = line.memberIds.filter((id) => id !== perfume.id);
+            if (siblings.length === 0) return null;
+            return (
+              <Section title={`The ${line.rootName} line`}>
+                <div className="flex flex-wrap gap-2">
+                  {siblings.map((id) => {
+                    const sib = PERFUME_BY_ID[id];
+                    if (!sib) return null;
+                    return (
+                      <button
+                        key={id}
+                        type="button"
+                        onClick={() => onOpen(id)}
+                        className="inline-flex items-center gap-2 rounded-chip border border-[var(--line)] px-3.5 py-1.5 font-sans text-[13px] text-parchment-dim outline-none transition-colors hover:border-champagne hover:text-champagne-bright"
+                      >
+                        {sib.name}
+                        {sib.year && (
+                          <span className="font-mono text-[10px] text-muted">{sib.year}</span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </Section>
+            );
+          })()}
 
           {/* note count footnote */}
           <p className="font-mono text-[11px] text-muted">

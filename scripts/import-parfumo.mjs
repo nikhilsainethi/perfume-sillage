@@ -239,8 +239,14 @@ function duplicatesExisting(house, name) {
   return existingByBrandWord.some((e) => {
     const brandOverlap = [...e.brandWords].some((w) => hw.has(w));
     if (!brandOverlap) return false;
-    if (n.length < 4 || e.name.length < 4) return n === e.name;
-    return n.includes(e.name) || e.name.includes(n);
+    if (n === e.name) return true;
+    if (n.length < 4 || e.name.length < 4) return false;
+    // prefix-junk ("emporio armani stronger with you" vs "stronger with you")
+    if (n.endsWith(' ' + e.name)) return true;
+    // over-stripped ("homme" vs "dior homme")
+    if (e.name.endsWith(' ' + n)) return true;
+    // suffix-extension is a legitimate FLANKER ("cool water intense") — keep
+    return false;
   });
 }
 

@@ -9,7 +9,7 @@
 // an original id — both are enforced by scripts/validate-catalog.mjs.
 // ============================================================
 
-import type { Concentration, Gender, PerfumeType, Season } from '@/domain/types';
+import type { Concentration, Gender, PerfumeType, Season } from '../domain/types.ts';
 
 export interface RawPerfume {
   id: string;

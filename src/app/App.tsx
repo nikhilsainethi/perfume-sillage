@@ -10,6 +10,9 @@ import { Providers } from './providers';
 import { PerfumeDiscoveryPage } from '@/pages/PerfumeDiscoveryPage';
 import { AmbientBackground } from '@/shared/ui/AmbientBackground';
 import { NavBar } from '@/shared/ui/NavBar';
+import { useWebGLCapability } from '@/shared/webgl/useWebGLCapability';
+
+const AmbientWebGL = lazy(() => import('@/shared/ui/AmbientWebGL'));
 
 const AtelierPage = lazy(() =>
   import('@/features/atelier/AtelierPage').then((m) => ({ default: m.AtelierPage })),
@@ -21,6 +24,9 @@ const SharedCreationPage = lazy(() =>
   import('@/features/share/SharedCreationPage').then((m) => ({
     default: m.SharedCreationPage,
   })),
+);
+const HousesPage = lazy(() =>
+  import('@/features/houses/HousesPage').then((m) => ({ default: m.HousesPage })),
 );
 
 function ScrollToTop() {
@@ -41,17 +47,32 @@ function RouteFallback() {
   );
 }
 
+function Atmosphere() {
+  const canRender3D = useWebGLCapability();
+  return (
+    <>
+      <AmbientBackground />
+      {canRender3D && (
+        <Suspense fallback={null}>
+          <AmbientWebGL />
+        </Suspense>
+      )}
+    </>
+  );
+}
+
 export default function App() {
   return (
     <Providers>
       <HashRouter>
         <ScrollToTop />
         <div className="relative min-h-screen">
-          <AmbientBackground />
+          <Atmosphere />
           <NavBar />
           <Suspense fallback={<RouteFallback />}>
             <Routes>
               <Route path="/" element={<PerfumeDiscoveryPage />} />
+              <Route path="/houses" element={<HousesPage />} />
               <Route path="/atelier" element={<AtelierPage />} />
               <Route path="/shelf" element={<ShelfPage />} />
               <Route path="/c/:code" element={<SharedCreationPage />} />
