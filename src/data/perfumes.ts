@@ -20,6 +20,12 @@ import { PHOTO_IDS } from './photoIds.ts';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
+// Photo URLs are runtime strings, so Vite's --base does NOT rewrite them:
+// prefix with BASE_URL ('/' in dev, '/perfume-sillage/' on GitHub Pages).
+// The optional chain keeps this file importable from plain Node scripts,
+// where import.meta.env doesn't exist.
+const BASE = import.meta.env?.BASE_URL ?? '/';
+
 // Perceived strength by tier + order: heart reads loudest, top is fleeting.
 const LAYER_BASE: Record<NotePosition, number> = { top: 0.8, heart: 0.92, base: 0.85 };
 const LAYER_STEP = 0.1;
@@ -52,7 +58,7 @@ function build(raw: RawPerfume): Perfume {
     concentration: raw.conc,
     year: raw.year,
     gender: raw.gender,
-    photo: PHOTO_IDS.has(raw.id) ? `/photos/${raw.id}.jpg` : undefined,
+    photo: PHOTO_IDS.has(raw.id) ? `${BASE}photos/${raw.id}.jpg` : undefined,
     accent,
     pyramid,
     accords,
