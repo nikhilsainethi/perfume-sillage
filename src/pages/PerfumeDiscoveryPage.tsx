@@ -4,7 +4,9 @@
 // a single scroll journey, and the detail-panel portal.
 // ============================================================
 
+import { useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useDiscovery } from '@/store/discoveryStore';
 import { useActivePerfume, useOrderedPerfumes } from '@/store/selectors';
 import { PERFUME_BY_ID } from '@/data/perfumes';
@@ -32,10 +34,29 @@ export function PerfumeDiscoveryPage() {
 
   const featured = PERFUME_BY_ID[FEATURED_ID];
 
+  // deep link: /#/s/<id> opens that scent's detail over the atlas
+  const { scentId } = useParams<{ scentId: string }>();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!scentId) return;
+    if (PERFUME_BY_ID[scentId]) openDetail(scentId);
+    else navigate('/', { replace: true });
+  }, [scentId, openDetail, navigate]);
+
+  const handleOpenDetail = (id: string) => {
+    openDetail(id);
+    if (scentId) navigate(`/s/${id}`, { replace: true });
+  };
+  const handleCloseDetail = () => {
+    closeDetail();
+    if (scentId) navigate('/', { replace: true });
+  };
+
   const onCompare = (originalId: string, cloneId: string) => {
     setComparisonOriginal(originalId);
     setComparisonClone(cloneId);
     closeDetail();
+    if (scentId) navigate('/', { replace: true });
     // let the panel exit, then scroll to the comparison act
     window.setTimeout(() => scrollToId('compare'), 220);
   };
@@ -75,8 +96,8 @@ export function PerfumeDiscoveryPage() {
           <PerfumeDetailPanel
             key={activePerfume.id}
             perfume={activePerfume}
-            onClose={closeDetail}
-            onOpen={openDetail}
+            onClose={handleCloseDetail}
+            onOpen={handleOpenDetail}
             onCompare={onCompare}
           />
         )}

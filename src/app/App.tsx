@@ -10,6 +10,7 @@ import { Providers } from './providers';
 import { PerfumeDiscoveryPage } from '@/pages/PerfumeDiscoveryPage';
 import { AmbientBackground } from '@/shared/ui/AmbientBackground';
 import { NavBar } from '@/shared/ui/NavBar';
+import { ErrorBoundary } from '@/shared/ui/ErrorBoundary';
 import { useWebGLCapability } from '@/shared/webgl/useWebGLCapability';
 
 const AmbientWebGL = lazy(() => import('@/shared/ui/AmbientWebGL'));
@@ -69,15 +70,18 @@ export default function App() {
         <div className="relative min-h-screen">
           <Atmosphere />
           <NavBar />
-          <Suspense fallback={<RouteFallback />}>
-            <Routes>
-              <Route path="/" element={<PerfumeDiscoveryPage />} />
-              <Route path="/houses" element={<HousesPage />} />
-              <Route path="/atelier" element={<AtelierPage />} />
-              <Route path="/shelf" element={<ShelfPage />} />
-              <Route path="/c/:code" element={<SharedCreationPage />} />
-            </Routes>
-          </Suspense>
+          <ErrorBoundary>
+            <Suspense fallback={<RouteFallback />}>
+              <Routes>
+                <Route path="/" element={<PerfumeDiscoveryPage />} />
+                <Route path="/s/:scentId" element={<PerfumeDiscoveryPage />} />
+                <Route path="/houses" element={<HousesPage />} />
+                <Route path="/atelier" element={<AtelierPage />} />
+                <Route path="/shelf" element={<ShelfPage />} />
+                <Route path="/c/:code" element={<SharedCreationPage />} />
+              </Routes>
+            </Suspense>
+          </ErrorBoundary>
         </div>
       </HashRouter>
     </Providers>

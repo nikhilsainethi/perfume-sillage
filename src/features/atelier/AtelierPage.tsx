@@ -7,6 +7,8 @@
 
 import { motion } from 'framer-motion';
 import { NOTES_LIST, WHEEL_NOTES } from '@/data/notes';
+import { PERFUMES } from '@/data/perfumes';
+import { TIER_CAP } from '@/domain/creation';
 import { useAtelier } from '@/store/atelierStore';
 import { ease } from '@/shared/motion/motion';
 import { useDraftPerfume } from './useDraftPerfume';
@@ -19,7 +21,23 @@ import { AtlasPlacement } from './AtlasPlacement';
 export function AtelierPage() {
   const toggleDraftNote = useAtelier((s) => s.toggleDraftNote);
   const draftPyramid = useAtelier((s) => s.draft.pyramid);
+  const loadDecoded = useAtelier((s) => s.loadDecoded);
   const analysis = useDraftPerfume();
+
+  // seed the draft from a real scent's pyramid — a starting point to bend
+  const remixClassic = () => {
+    const p = PERFUMES[Math.floor(Math.random() * PERFUMES.length)];
+    loadDecoded({
+      name: `Variation on ${p.name}`.slice(0, 60),
+      description: undefined,
+      pyramid: {
+        top: p.pyramid.top.slice(0, TIER_CAP).map((n) => ({ ...n })),
+        heart: p.pyramid.heart.slice(0, TIER_CAP).map((n) => ({ ...n })),
+        base: p.pyramid.base.slice(0, TIER_CAP).map((n) => ({ ...n })),
+      },
+      droppedNoteIds: [],
+    });
+  };
 
   const selectedIds = [
     ...draftPyramid.top,
@@ -46,6 +64,13 @@ export function AtelierPage() {
           your blend as you work — its character, its balance, and the real scents
           it sits beside.
         </p>
+        <button
+          type="button"
+          onClick={remixClassic}
+          className="self-start rounded-chip border border-[var(--line)] px-4 py-2 font-sans text-[13px] text-parchment-dim outline-none transition-colors hover:border-champagne hover:text-champagne-bright"
+        >
+          ↺ Not sure where to begin? Remix a classic
+        </button>
       </motion.header>
 
       <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:gap-12">

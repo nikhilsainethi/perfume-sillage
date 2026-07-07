@@ -125,10 +125,13 @@ function NoteOrb({ note, position, selected, dimmed, onToggle, onHoverFamily }: 
     }
     if (mesh.current && mat.current) {
       const targetScale = hovered ? 1.5 : selected ? 1.22 : 1;
-      mesh.current.scale.lerp(
-        new THREE.Vector3(targetScale, targetScale, targetScale),
+      // scalar lerp — no per-frame Vector3 allocations (44 orbs × 60fps)
+      const s = THREE.MathUtils.lerp(
+        mesh.current.scale.x,
+        targetScale,
         Math.min(1, dt * 9),
       );
+      mesh.current.scale.setScalar(s);
       const targetEmissive = hovered ? 0.85 : selected ? 0.6 : dimmed ? 0.04 : 0.18;
       mat.current.emissiveIntensity +=
         (targetEmissive - mat.current.emissiveIntensity) * Math.min(1, dt * 9);

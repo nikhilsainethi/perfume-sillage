@@ -5,7 +5,7 @@
 // trapped; Esc and backdrop close. Portaled above everything.
 // ============================================================
 
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import type { Perfume } from '@/domain/types';
@@ -63,6 +63,18 @@ export function PerfumeDetailPanel({
 }) {
   const isMobile = useIsMobile();
   const trapRef = useFocusTrap<HTMLDivElement>(true, onClose);
+  const [linkCopied, setLinkCopied] = useState(false);
+
+  const copyScentLink = async () => {
+    const url = `${window.location.origin}${window.location.pathname}#/s/${perfume.id}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setLinkCopied(true);
+      window.setTimeout(() => setLinkCopied(false), 2000);
+    } catch {
+      window.prompt('Copy link to this scent:', url);
+    }
+  };
 
   // scent twins: the whole atlas ranked against this perfume
   const twins = useMemo(
@@ -164,7 +176,16 @@ export function PerfumeDetailPanel({
               <h2 className="font-display text-[clamp(34px,7vw,52px)] leading-[1.04] text-parchment">
                 {perfume.name}
               </h2>
-              <OriginalCloneBadge type={perfume.type} size="md" />
+              <div className="flex items-center gap-2.5">
+                <OriginalCloneBadge type={perfume.type} size="md" />
+                <button
+                  type="button"
+                  onClick={copyScentLink}
+                  className="rounded-chip border border-[var(--line)] px-3 py-1.5 font-sans text-[11.5px] text-parchment-dim outline-none transition-colors hover:border-champagne hover:text-champagne-bright"
+                >
+                  {linkCopied ? 'Link copied ✓' : 'Copy link'}
+                </button>
+              </div>
             </div>
             {meta.length > 0 && (
               <div className="flex flex-wrap justify-center gap-2">

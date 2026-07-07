@@ -171,6 +171,8 @@ export function BottleVisual({
         src={perfume.photo}
         alt={`${perfume.name} by ${perfume.brand}`}
         draggable={false}
+        loading="lazy"
+        decoding="async"
         className={`h-full w-full ${variant === 'thumb' ? 'object-contain' : 'object-cover'} ${className ?? ''}`}
       />
     );

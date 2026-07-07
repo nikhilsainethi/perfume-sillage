@@ -5,7 +5,7 @@
 // All derived; recomputes only when the pyramid changes.
 // ============================================================
 
-import { useMemo } from 'react';
+import { useDeferredValue, useMemo } from 'react';
 import type { Perfume } from '@/domain/types';
 import { toPerfume, allRefs, noteCount } from '@/domain/creation';
 import { characterLine } from '@/domain/creationInsights';
@@ -35,7 +35,8 @@ export function useDraftPerfume(): DraftAnalysis {
   const name = useAtelier((s) => s.draft.name);
   const id = useAtelier((s) => s.draft.id);
 
-  return useMemo(() => {
+  // Fast lane: accords, character line, harmony — cheap, updates every tick.
+  const immediate = useMemo(() => {
     const perfume = toPerfume(
       { id: id ?? 'draft', name: name || 'Untitled', pyramid },
       NOTES,
@@ -46,17 +47,26 @@ export function useDraftPerfume(): DraftAnalysis {
     const ids = allRefs(pyramid).map((n) => n.noteId);
     const sparks = count >= 2 ? HARMONY.sparksFor(ids, NOTES) : [];
     const cautions = cautionsFor(pyramid, NOTES);
-
-    let neighbors: Neighbor[] = [];
-    if (count >= 2) {
-      neighbors = PERFUMES.map((p) => ({
-        perfume: p,
-        overall: compare(p, perfume, NOTES).similarity.overall,
-      }))
-        .sort((a, b) => b.overall - a.overall)
-        .slice(0, 4);
-    }
-
-    return { perfume, count, line, sparks, cautions, neighbors };
+    return { perfume, count, line, sparks, cautions };
   }, [pyramid, name, id]);
+
+  // Slow lane: ranking the whole atlas (378 full comparisons) is deferred so
+  // dragging an intensity slider never blocks the frame.
+  const deferredPyramid = useDeferredValue(pyramid);
+  const neighbors = useMemo<Neighbor[]>(() => {
+    if (noteCount(deferredPyramid) < 2) return [];
+    const draftPerfume = toPerfume(
+      { id: 'draft-rank', name: 'draft', pyramid: deferredPyramid },
+      NOTES,
+      FAMILY_COLOR,
+    );
+    return PERFUMES.map((p) => ({
+      perfume: p,
+      overall: compare(p, draftPerfume, NOTES).similarity.overall,
+    }))
+      .sort((a, b) => b.overall - a.overall)
+      .slice(0, 4);
+  }, [deferredPyramid]);
+
+  return { ...immediate, neighbors };
 }
