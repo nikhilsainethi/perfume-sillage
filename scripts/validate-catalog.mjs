@@ -68,6 +68,11 @@ const usedNotes = new Set();
 for (const p of RAW) for (const l of ['top', 'heart', 'base']) for (const id of p[l] ?? []) usedNotes.add(id);
 const unusedNotes = Object.keys(NOTES).filter((id) => !usedNotes.has(id));
 
+// credit ids must resolve (typo guard)
+for (const cid of Object.keys((await import(join(root, 'src/data/perfumerCredits.ts'))).PERFUMER_CREDITS)) {
+  if (!ids.has(cid)) errors.push('perfumer credit references unknown id: ' + cid);
+}
+
 console.log(`Catalog: ${RAW.length} scents (${originals} originals, ${clones} dupes)`);
 console.log(`Notes: ${Object.keys(NOTES).length} defined, ${usedNotes.size} used, ${unusedNotes.length} unused`);
 

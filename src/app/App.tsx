@@ -29,6 +29,9 @@ const SharedCreationPage = lazy(() =>
 const HousesPage = lazy(() =>
   import('@/features/houses/HousesPage').then((m) => ({ default: m.HousesPage })),
 );
+const FinderPage = lazy(() =>
+  import('@/features/finder/FinderPage').then((m) => ({ default: m.FinderPage })),
+);
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -75,7 +78,9 @@ export default function App() {
               <Routes>
                 <Route path="/" element={<PerfumeDiscoveryPage />} />
                 <Route path="/s/:scentId" element={<PerfumeDiscoveryPage />} />
-                <Route path="/houses" element={<HousesPage />} />
+                <Route path="/finder" element={<FinderPage />} />
+              <Route path="/houses" element={<HousesPage mode="maisons" />} />
+              <Route path="/perfumers" element={<HousesPage mode="noses" />} />
                 <Route path="/atelier" element={<AtelierPage />} />
                 <Route path="/shelf" element={<ShelfPage />} />
                 <Route path="/c/:code" element={<SharedCreationPage />} />

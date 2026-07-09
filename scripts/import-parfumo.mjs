@@ -212,6 +212,18 @@ function concOf(name) {
   return undefined;
 }
 
+// "Valery Sokolov / Валерий Соколов" — slashes separate co-authors AND
+// transliterations; keep latin-script segments only, deduped.
+function parsePerfumer(raw) {
+  if (!raw || raw === 'NA') return undefined;
+  const segs = raw.split('/').map((s) => s.trim()).filter((s) => {
+    const letters = s.replace(/[^A-Za-zÀ-ž]/g, '');
+    return letters.length >= 3 && /^[\x20-\x7FÀ-ž.'’\-]+$/.test(s);
+  });
+  const uniq = [...new Set(segs)];
+  return uniq.length ? uniq.slice(0, 3).join(' & ').slice(0, 90) : undefined;
+}
+
 function genderOf(name, url) {
   const s = `${name} ${url}`.toLowerCase();
   if (/\b(homme|man|men|male|pour lui|uomo|him|monsieur|gentleman)\b/.test(s)) return 'masculine';
@@ -282,7 +294,7 @@ for (const r of rows) {
   if (tiers.top.length === 0 || tiers.heart.length === 0 || tiers.base.length === 0) continue;
   if (mapped / raw < 0.7 || mapped < 5) continue;
 
-  candidates.push({ house, name, year, rc, rv, tiers, key, conc: concOf(r.Name), gender: genderOf(r.Name, r.URL ?? '') });
+  candidates.push({ house, name, year, rc, rv, tiers, key, conc: concOf(r.Name), gender: genderOf(r.Name, r.URL ?? ''), perfumer: parsePerfumer(r.Perfumers) });
 }
 
 // dedupe same scent across concentrations: keep highest rating count
@@ -334,7 +346,7 @@ function buildEntry(c) {
   while (existingIds.has(id)) id = `${id}-p`;
   existingIds.add(id);
 
-  return { id, name: c.name, brand: c.house, type: 'original', year: c.year, gender: c.gender, conc: c.conc, top: c.tiers.top, heart: c.tiers.heart, base: c.tiers.base, perf: [longevity, projection, sillage], seasons, desc };
+  return { id, name: c.name, brand: c.house, type: 'original', year: c.year, gender: c.gender, conc: c.conc, perfumer: c.perfumer, top: c.tiers.top, heart: c.tiers.heart, base: c.tiers.base, perf: [longevity, projection, sillage], seasons, desc };
 }
 
 const entries = picked.map(buildEntry);
@@ -349,6 +361,7 @@ const body = entries
       e.year ? `year: ${e.year}` : null,
       e.gender !== 'unisex' ? `gender: ${lit(e.gender)}` : `gender: 'unisex'`,
       e.conc ? `conc: ${lit(e.conc)}` : null,
+      e.perfumer ? `perfumer: ${JSON.stringify(e.perfumer)}` : null,
       `top: ${lit(e.top)}`, `heart: ${lit(e.heart)}`, `base: ${lit(e.base)}`,
       `perf: [${e.perf.join(', ')}]`, `seasons: ${lit(e.seasons)}`,
       `desc: ${JSON.stringify(e.desc)}`,

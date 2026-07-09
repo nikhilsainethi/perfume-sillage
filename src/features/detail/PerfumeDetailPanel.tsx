@@ -7,7 +7,9 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useDiscovery } from '@/store/discoveryStore';
 import type { Perfume } from '@/domain/types';
 import { NOTES } from '@/data/notes';
 import { PERFUMES, PERFUME_BY_ID } from '@/data/perfumes';
@@ -64,6 +66,20 @@ export function PerfumeDetailPanel({
   const isMobile = useIsMobile();
   const trapRef = useFocusTrap<HTMLDivElement>(true, onClose);
   const [linkCopied, setLinkCopied] = useState(false);
+  const setSearch = useDiscovery((s) => s.setSearch);
+  const navigate = useNavigate();
+
+  const openPerfumerInAtlas = () => {
+    if (!perfume.perfumer) return;
+    // search by the first individual name — collaborations match by substring
+    const first = perfume.perfumer.split(/,|&/)[0]?.trim() ?? perfume.perfumer;
+    setSearch(first);
+    onClose();
+    navigate('/');
+    window.setTimeout(() => {
+      document.getElementById('discover')?.scrollIntoView({ behavior: 'instant' as ScrollBehavior });
+    }, 150);
+  };
 
   const copyScentLink = async () => {
     const url = `${window.location.origin}${window.location.pathname}#/s/${perfume.id}`;
@@ -226,7 +242,14 @@ export function PerfumeDetailPanel({
           {perfume.perfumer && (
             <p className="font-sans text-[13px] text-muted">
               Composed by{' '}
-              <span className="text-parchment-dim">{perfume.perfumer}</span>
+              <button
+                type="button"
+                onClick={openPerfumerInAtlas}
+                title={`See everything by ${perfume.perfumer} in the atlas`}
+                className="text-parchment-dim underline decoration-[rgba(176,132,60,0.4)] underline-offset-2 outline-none transition-colors hover:text-champagne-bright"
+              >
+                {perfume.perfumer}
+              </button>
               {perfume.house ? ` · ${perfume.house}` : ''}
             </p>
           )}

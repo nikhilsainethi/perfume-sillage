@@ -29,7 +29,8 @@ function matchesQuery(
   notes: Record<string, FragranceNote>,
 ): boolean {
   if (!q) return true;
-  if (`${p.name} ${p.brand} ${p.house ?? ''}`.toLowerCase().includes(q)) return true;
+  if (`${p.name} ${p.brand} ${p.house ?? ''} ${p.perfumer ?? ''}`.toLowerCase().includes(q))
+    return true;
   const allNoteIds = [
     ...p.pyramid.top,
     ...p.pyramid.heart,

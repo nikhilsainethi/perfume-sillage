@@ -17,6 +17,7 @@ import { NOTES, FAMILY_COLOR } from './notes.ts';
 import { RAW, type RawPerfume } from './catalogData.ts';
 import { IMPORTED } from './catalogImported.ts';
 import { PHOTO_IDS } from './photoIds.ts';
+import { PERFUMER_CREDITS } from './perfumerCredits.ts';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
@@ -53,7 +54,7 @@ function build(raw: RawPerfume): Perfume {
     name: raw.name,
     brand: raw.brand,
     house: raw.house,
-    perfumer: raw.perfumer,
+    perfumer: raw.perfumer ?? PERFUMER_CREDITS[raw.id],
     type: raw.type,
     concentration: raw.conc,
     year: raw.year,

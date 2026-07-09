@@ -9,6 +9,7 @@ import { useAtelier } from '@/store/atelierStore';
 
 const LINKS = [
   { to: '/', label: 'Atlas', end: true },
+  { to: '/finder', label: 'Finder', end: false },
   { to: '/houses', label: 'Houses', end: false },
   { to: '/atelier', label: 'Atelier', end: false },
   { to: '/shelf', label: 'My Shelf', end: false },
@@ -26,12 +27,13 @@ export function NavBar() {
       >
         <Link
           to="/"
-          className="font-display text-[19px] tracking-[0.08em] text-parchment outline-none transition-colors hover:text-champagne-bright"
+          className="shrink-0 font-display text-[19px] tracking-[0.08em] text-parchment outline-none transition-colors hover:text-champagne-bright"
         >
           SILLAGE
         </Link>
 
-        <div className="flex items-center gap-1 sm:gap-2">
+        {/* five links must survive a 390px viewport — scroll, don't wrap */}
+        <div className="scrollbar-none flex items-center gap-1 overflow-x-auto sm:gap-2">
           {LINKS.map((l) => (
             <NavLink
               key={l.to}
