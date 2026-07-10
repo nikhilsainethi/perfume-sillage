@@ -12,7 +12,7 @@ import type {
   Perfume,
   SeasonMood,
 } from '../domain/types.ts';
-import { deriveAccords } from '../domain/derive.ts';
+import { deriveAccords, derivePerformance } from '../domain/derive.ts';
 import { NOTES, FAMILY_COLOR } from './notes.ts';
 import { RAW, type RawPerfume } from './catalogData.ts';
 import { IMPORTED } from './catalogImported.ts';
@@ -40,6 +40,10 @@ function layerRefs(ids: string[], pos: NotePosition): NoteRef[] {
 
 const DEFAULT_SEASONS: SeasonMood['seasons'] = ['spring', 'autumn'];
 
+/** Ids whose data came from the community import (Parfumo, CC0) — their
+ *  performance is estimated from the pyramid, and the UI says so. */
+export const IMPORTED_IDS = new Set(IMPORTED.map((p) => p.id));
+
 function build(raw: RawPerfume): Perfume {
   const pyramid: NotePyramid = {
     top: layerRefs(raw.top, 'top'),
@@ -48,6 +52,12 @@ function build(raw: RawPerfume): Perfume {
   };
   const accords = deriveAccords(pyramid, NOTES);
   const accent = FAMILY_COLOR[accords[0]?.family ?? 'amber'];
+
+  // curated entries keep their hand-authored performance; imported entries
+  // get the shared estimator (same one the Atelier uses for creations)
+  const performance = IMPORTED_IDS.has(raw.id)
+    ? derivePerformance(pyramid, accords)
+    : { longevity: raw.perf[0], projection: raw.perf[1], sillage: raw.perf[2] };
 
   return {
     id: raw.id,
@@ -63,11 +73,7 @@ function build(raw: RawPerfume): Perfume {
     accent,
     pyramid,
     accords,
-    performance: {
-      longevity: raw.perf[0],
-      projection: raw.perf[1],
-      sillage: raw.perf[2],
-    },
+    performance,
     context: {
       seasons: raw.seasons ?? DEFAULT_SEASONS,
       moods: raw.moods ?? [],

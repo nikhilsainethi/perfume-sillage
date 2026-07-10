@@ -88,6 +88,7 @@ export const NOTES_LIST: FragranceNote[] = [
   n('mango', 'Mango', 'fresh', false, 'Lush tropical fruit.'),
   n('sea-salt', 'Sea Salt', 'fresh', false, 'Saline, skin-like minerality.'),
   n('green-notes', 'Green Notes', 'fresh', true, 'Crushed leaf and stem.', ['galbanum']),
+  n('aldehydes', 'Aldehydes', 'fresh', true, 'Champagne-fizz sparkle — soapy, radiant, abstract.', ['aldehyde', 'aldehydic notes']),
 
   // ---------------- aromatic / herbal ----------------
   n('lavender', 'Lavender', 'aromatic', true, 'Clean, barbershop herb.'),

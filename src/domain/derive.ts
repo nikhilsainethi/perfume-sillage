@@ -59,7 +59,9 @@ export function deriveSeasons(accords: Accord[]): Season[] {
   return ['spring', 'autumn'];
 }
 
-/** Rough-but-honest performance heuristic for compositions. */
+/** Rough-but-honest performance heuristic for compositions & imported scents.
+ *  Freshness actively PENALIZES longevity/projection — a featherweight citrus
+ *  must not read like an amber bomb just because the math centered it. */
 export function derivePerformance(
   pyramid: NotePyramid,
   accords: Accord[],
@@ -74,10 +76,20 @@ export function derivePerformance(
     pyramid.top.length + pyramid.heart.length + pyramid.base.length || 1;
   const avgIntensity = total / count;
   const warm = familyShare(accords, WARM);
+  const fresh = familyShare(accords, FRESH);
 
-  const longevity = clamp(Math.round(3 + 5 * (base / total) * 2 + 2 * warm), 2, 10);
+  const longevity = clamp(
+    Math.round(2.5 + 6 * (base / total) + 3 * warm - 2.5 * fresh),
+    2,
+    10,
+  );
   const projection = clamp(
-    Math.round(2 + 5 * avgIntensity + 3 * familyShare(accords, ['amber', 'sweet', 'spicy'])),
+    Math.round(
+      2 +
+        4.5 * avgIntensity +
+        3 * familyShare(accords, ['amber', 'sweet', 'spicy']) -
+        1.5 * fresh,
+    ),
     2,
     10,
   );

@@ -132,7 +132,7 @@ export const RAW: RawPerfume[] = [
   {
     id: 'chanel-no5', name: 'N°5', brand: 'Chanel', house: 'Chanel', perfumer: 'Ernest Beaux',
     type: 'original', year: 1921, gender: 'feminine', conc: 'parfum',
-    top: ['bergamot', 'neroli', 'lemon'], heart: ['rose', 'jasmine', 'lily-of-the-valley'], base: ['sandalwood', 'vanilla', 'musk'],
+    top: ['aldehydes', 'bergamot', 'neroli', 'lemon'], heart: ['rose', 'jasmine', 'lily-of-the-valley'], base: ['sandalwood', 'vanilla', 'musk'],
     perf: [8, 7, 7], seasons: ['autumn', 'winter'],
     desc: 'The most famous perfume on earth — aldehydic abstraction over rose and jasmine. Not a flower, but the idea of one.',
   },

@@ -164,7 +164,7 @@ const ALIAS = {
   'patchouli leaf': 'patchouli', 'patchouli heart': 'patchouli',
   'musk mallow': 'musk', 'skin musk': 'musk',
   'suede': 'suede', 'leather': 'leather', 'smoke': 'incense', 'smoky notes': 'incense', 'burnt wood': 'guaiac-wood', 'charred wood': 'guaiac-wood',
-  'aldehydes': 'green-notes', 'powdery notes': 'iris', 'talc': 'iris', 'makeup notes': 'iris',
+  'aldehydes': 'aldehydes', 'powdery notes': 'iris', 'talc': 'iris', 'makeup notes': 'iris',
   'champagne': 'rum', 'wine': 'rum', 'red wine': 'rum',
   'tea': 'green-notes', 'green tea': 'green-notes', 'black tea': 'tobacco', 'earl grey tea': 'bergamot', 'matcha': 'green-notes', 'maté': 'green-notes', 'mate': 'green-notes',
 };
@@ -185,15 +185,30 @@ function mapNote(raw) {
 }
 
 // ---------- name cleaning ----------
-const CONC_RE = /\b(eau de parfum|eau de toilette|eau de cologne|extrait de parfum|parfum|extrait|cologne|edt|edp)\b/gi;
+// Concentration descriptors are stripped ONLY as trailing phrases, and a bare
+// "Parfum"/"Extrait" only when it isn't part of the scent's name itself
+// ("Y Le Parfum", "Essence de Parfum" flankers keep their names intact).
+const CONC_TAIL_RE =
+  /\s+(eau de parfum intense|eau de parfum|eau de toilette|eau de cologne|extrait de parfum|toilet water|after shave|edt|edp|cologne)\s*$/i;
+const BARE_CONC_TAIL_RE = /\s+(parfum|extrait)\s*$/i;
+const NAME_CARRIER_RE = /\b(le|la|de|du|d'|l'|essence|esprit)\s*$/i;
 const SUBBRANDS = ['emporio armani', 'boss', 'ck', 'lacoste'];
 const GENERIC = new Set(['homme', 'man', 'men', 'pour homme', 'woman', 'women', 'femme', 'pour femme', 'lui', 'elle', 'uomo', 'donna']);
 function cleanName(name, brand, year) {
   let n = name;
   n = n.split(brand).join(' '); // strip embedded brand
   if (year) n = n.split(String(year)).join(' ');
-  n = n.replace(CONC_RE, ' ');
-  n = n.replace(/\s+/g, ' ').replace(/^[\s\-–—/]+/g, '').replace(/[\s\-–—/]+$/g, '').trim();
+  n = n.replace(/\s+/g, ' ').trim();
+  // peel trailing concentration phrases (possibly stacked)
+  let prev;
+  do {
+    prev = n;
+    n = n.replace(CONC_TAIL_RE, '').trim();
+    const bare = n.replace(BARE_CONC_TAIL_RE, '').trim();
+    // only accept the bare strip if it doesn't leave a dangling carrier word
+    if (bare !== n && !NAME_CARRIER_RE.test(bare)) n = bare;
+  } while (n !== prev);
+  n = n.replace(/^[\s\-–—/]+/g, '').replace(/[\s\-–—/]+$/g, '').trim();
   // strip leading sub-brand prefixes ("Emporio Armani - X" -> "X")
   for (const sb of SUBBRANDS) {
     const re = new RegExp(`^${sb}\\s*[-–—:]\\s*`, 'i');
@@ -340,7 +355,7 @@ function buildEntry(c) {
   const [f1, f2] = fams;
   const core = f2 ? `${FAMILY_WORD[f1[0]]}-${FAMILY_WORD[f2[0]]}` : FAMILY_WORD[f1[0]];
   const leadNotes = [...c.tiers.heart, ...c.tiers.top].slice(0, 2).map((id) => NOTES[id].name.toLowerCase());
-  const desc = `A ${WARM.has(f1[0]) ? 'warm' : 'luminous'} ${core} composition led by ${leadNotes.join(' and ')}${c.year ? `, in the house style of ${c.house} (${c.year})` : ` from ${c.house}`}. Community-documented pyramid via Parfumo.`;
+  const desc = `A ${WARM.has(f1[0]) ? 'warm' : 'luminous'} ${core} composition led by ${leadNotes.join(' and ')}${c.year ? `, in the house style of ${c.house} (${c.year})` : ` from ${c.house}`}.`;
 
   let id = slug(`${c.house} ${c.name}`);
   while (existingIds.has(id)) id = `${id}-p`;

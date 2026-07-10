@@ -12,7 +12,7 @@ import { motion } from 'framer-motion';
 import { useDiscovery } from '@/store/discoveryStore';
 import type { Perfume } from '@/domain/types';
 import { NOTES } from '@/data/notes';
-import { PERFUMES, PERFUME_BY_ID } from '@/data/perfumes';
+import { IMPORTED_IDS, PERFUMES, PERFUME_BY_ID } from '@/data/perfumes';
 import { LINES } from '@/data/lines';
 import { compare } from '@/domain/comparison';
 import { useIsMobile } from '@/shared/hooks/useMediaQuery';
@@ -224,7 +224,11 @@ export function PerfumeDetailPanel({
             <Section title="Accord profile">
               <AccordBar accords={perfume.accords} />
             </Section>
-            <Section title="Performance">
+            <Section
+              title={
+                IMPORTED_IDS.has(perfume.id) ? 'Performance — estimated' : 'Performance'
+              }
+            >
               <PerformanceMeters performance={perfume.performance} />
             </Section>
           </div>
@@ -334,7 +338,7 @@ export function PerfumeDetailPanel({
             </Section>
           )}
 
-          {/* note count footnote */}
+          {/* note count + provenance footnote */}
           <p className="font-mono text-[11px] text-muted">
             {
               [...perfume.pyramid.top, ...perfume.pyramid.heart, ...perfume.pyramid.base].filter(
@@ -342,6 +346,7 @@ export function PerfumeDetailPanel({
               ).length
             }{' '}
             notes across three tiers
+            {IMPORTED_IDS.has(perfume.id) && ' · pyramid from community data (Parfumo, CC0)'}
           </p>
         </div>
       </motion.div>
