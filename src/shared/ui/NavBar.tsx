@@ -1,10 +1,12 @@
 // ============================================================
 // SILLAGE — editorial nav
-// Slim glass bar: wordmark left, the three destinations right.
-// Quiet until needed; the active destination carries champagne.
+// Slim glass bar: wordmark left, the five destinations right.
+// The active pill MORPHS between links (shared layoutId) —
+// navigation feels like one object sliding, not two states.
 // ============================================================
 
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useAtelier } from '@/store/atelierStore';
 
 const LINKS = [
@@ -17,7 +19,6 @@ const LINKS = [
 
 export function NavBar() {
   const count = useAtelier((s) => s.creations.length);
-  const location = useLocation();
 
   return (
     <header className="glass sticky top-0 z-40 border-b border-[var(--line)]">
@@ -39,23 +40,36 @@ export function NavBar() {
               key={l.to}
               to={l.to}
               end={l.end}
-              className="relative rounded-chip px-3 py-1.5 font-sans text-[13px] outline-none transition-colors sm:px-4"
-              style={({ isActive }) => ({
-                color: isActive ? '#8A6526' : '#6E6456',
-                background: isActive ? 'rgba(176,132,60,0.12)' : 'transparent',
-              })}
+              className="relative shrink-0 rounded-chip px-3 py-1.5 font-sans text-[13px] outline-none sm:px-4"
             >
-              {l.label}
-              {l.to === '/shelf' && count > 0 && (
-                <span
-                  className="ml-1.5 inline-flex h-[16px] min-w-[16px] items-center justify-center rounded-full px-1 font-mono text-[10px]"
-                  style={{
-                    background: location.pathname.startsWith('/shelf') ? '#B0843C' : 'rgba(176,132,60,0.18)',
-                    color: location.pathname.startsWith('/shelf') ? '#FFFFFF' : '#8A6526',
-                  }}
-                >
-                  {count}
-                </span>
+              {({ isActive }) => (
+                <>
+                  {isActive && (
+                    <motion.span
+                      layoutId="nav-pill"
+                      className="absolute inset-0 rounded-chip"
+                      style={{ background: 'rgba(176,132,60,0.14)' }}
+                      transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+                    />
+                  )}
+                  <span
+                    className="relative z-10 transition-colors"
+                    style={{ color: isActive ? '#8A6526' : '#6E6456' }}
+                  >
+                    {l.label}
+                    {l.to === '/shelf' && count > 0 && (
+                      <span
+                        className="ml-1.5 inline-flex h-[16px] min-w-[16px] items-center justify-center rounded-full px-1 font-mono text-[10px]"
+                        style={{
+                          background: isActive ? '#B0843C' : 'rgba(176,132,60,0.18)',
+                          color: isActive ? '#FFFFFF' : '#8A6526',
+                        }}
+                      >
+                        {count}
+                      </span>
+                    )}
+                  </span>
+                </>
               )}
             </NavLink>
           ))}

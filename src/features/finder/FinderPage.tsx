@@ -21,7 +21,7 @@ import { PERFUMES } from '@/data/perfumes';
 import { useDiscovery } from '@/store/discoveryStore';
 import { BottleVisual } from '@/shared/ui/BottleVisual';
 import { OriginalCloneBadge } from '@/shared/ui/OriginalCloneBadge';
-import { ease } from '@/shared/motion/motion';
+import { ease, spring } from '@/shared/motion/motion';
 
 type Draft = Partial<FinderAnswers>;
 
@@ -180,11 +180,14 @@ export function FinderPage() {
               }`}
             >
               {current.options.map((opt) => (
-                <button
+                <motion.button
                   key={opt.value || 'surprise'}
                   type="button"
                   onClick={() => choose(current.key, opt.value)}
-                  className="group flex flex-col gap-1.5 rounded-panel border border-[var(--line)] bg-white p-5 text-left shadow-e1 outline-none transition-all hover:-translate-y-0.5 hover:border-champagne hover:shadow-e2"
+                  whileHover={{ y: -4 }}
+                  whileTap={{ scale: 0.965 }}
+                  transition={spring.hover}
+                  className="group flex flex-col gap-1.5 rounded-panel border border-[var(--line)] bg-white p-5 text-left shadow-e1 outline-none transition-[border-color,box-shadow] hover:border-champagne hover:shadow-e2"
                 >
                   <span className="flex items-center gap-2 font-display text-[19px] leading-tight text-parchment transition-colors group-hover:text-champagne-bright">
                     {current.key === 'lovedNoteId' && opt.value && (
@@ -200,7 +203,7 @@ export function FinderPage() {
                       {opt.desc}
                     </span>
                   )}
-                </button>
+                </motion.button>
               ))}
             </div>
 

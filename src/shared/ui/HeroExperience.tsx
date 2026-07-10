@@ -26,7 +26,10 @@ export function HeroExperience({ featured }: { featured: Perfume }) {
   });
 
   return (
-    <header className="relative mx-auto flex min-h-[88vh] w-full max-w-[1180px] flex-col justify-center px-5 py-24 sm:px-8">
+    <header
+      data-hero
+      className="relative mx-auto flex min-h-[88vh] w-full max-w-[1180px] flex-col justify-center px-5 py-24 sm:px-8"
+    >
       <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1.15fr_0.85fr]">
         {/* editorial column */}
         <div className="flex flex-col gap-7">
@@ -35,7 +38,7 @@ export function HeroExperience({ featured }: { featured: Perfume }) {
           </motion.span>
 
           {/* title mask-up */}
-          <h1 className="font-display leading-[0.92]">
+          <h1 data-hero-title className="font-display leading-[0.92]">
             <span className="block overflow-hidden">
               <motion.span
                 initial={reduce ? { opacity: 0 } : { y: '110%' }}
@@ -50,13 +53,14 @@ export function HeroExperience({ featured }: { featured: Perfume }) {
 
           <motion.p
             {...rise(0.4)}
+            data-hero-sub
             className="max-w-[44ch] text-balance font-display text-[clamp(20px,2.6vw,28px)] italic leading-snug text-parchment-dim"
           >
             Read the trail a fragrance leaves behind — discover by note, browse the
             collection, and compare an original with its interpretation.
           </motion.p>
 
-          <motion.div {...rise(0.55)} className="flex flex-wrap items-center gap-4 pt-2">
+          <motion.div {...rise(0.55)} data-hero-cta className="flex flex-wrap items-center gap-4 pt-2">
             <Link
               to="/atelier"
               className="group inline-flex items-center gap-2.5 rounded-chip bg-champagne px-6 py-3 font-sans text-[14px] font-medium text-ink outline-none transition-colors hover:bg-champagne-bright hover:text-white"
@@ -81,6 +85,7 @@ export function HeroExperience({ featured }: { featured: Perfume }) {
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: ease.enter, delay: 0.35 }}
+          data-hero-bottle
           className="relative mx-auto flex w-full max-w-[420px] flex-col items-center"
         >
           <div className="relative grid w-full place-items-center">

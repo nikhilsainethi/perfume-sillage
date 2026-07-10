@@ -4,9 +4,10 @@
 // a single scroll journey, and the detail-panel portal.
 // ============================================================
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useAtlasCinema } from './useAtlasCinema';
 import { useDiscovery } from '@/store/discoveryStore';
 import { useActivePerfume, useOrderedPerfumes } from '@/store/selectors';
 import { PERFUME_BY_ID } from '@/data/perfumes';
@@ -61,8 +62,21 @@ export function PerfumeDiscoveryPage() {
     window.setTimeout(() => scrollToId('compare'), 220);
   };
 
+  const cinemaScope = useRef<HTMLDivElement>(null);
+  useAtlasCinema(cinemaScope);
+
   return (
-    <div className="relative">
+    <div ref={cinemaScope} className="relative">
+      {/* champagne progress hairline (driven by ScrollTrigger) */}
+      <div
+        data-scroll-progress
+        aria-hidden
+        className="fixed left-0 top-14 z-30 h-[2px] w-full origin-left"
+        style={{
+          background: 'linear-gradient(90deg, #B0702F, #B0843C 60%, #8A6526)',
+          transform: 'scaleX(0)',
+        }}
+      />
       <main className="relative flex flex-col gap-32 pb-40 sm:gap-40">
         {featured && <HeroExperience featured={featured} />}
 

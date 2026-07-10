@@ -102,11 +102,12 @@ interface OrbProps {
   position: [number, number, number];
   selected: boolean;
   dimmed: boolean;
+  appearDelay: number; // seconds after mount before this orb materializes
   onToggle: (id: string) => void;
   onHoverFamily: (f: AccordFamily | null) => void;
 }
 
-function NoteOrb({ note, position, selected, dimmed, onToggle, onHoverFamily }: OrbProps) {
+function NoteOrb({ note, position, selected, dimmed, appearDelay, onToggle, onHoverFamily }: OrbProps) {
   const group = useRef<THREE.Group>(null);
   const mesh = useRef<THREE.Mesh>(null);
   const mat = useRef<THREE.MeshStandardMaterial>(null);
@@ -124,14 +125,17 @@ function NoteOrb({ note, position, selected, dimmed, onToggle, onHoverFamily }: 
       );
     }
     if (mesh.current && mat.current) {
-      const targetScale = hovered ? 1.5 : selected ? 1.22 : 1;
+      // staggered materialization: each orb eases in after its delay
+      const p = Math.min(1, Math.max(0, (t - appearDelay) / 0.55));
+      const appear = 1 - Math.pow(1 - p, 3);
+      const targetScale = (hovered ? 1.5 : selected ? 1.22 : 1) * appear;
       // scalar lerp — no per-frame Vector3 allocations (44 orbs × 60fps)
       const s = THREE.MathUtils.lerp(
         mesh.current.scale.x,
         targetScale,
         Math.min(1, dt * 9),
       );
-      mesh.current.scale.setScalar(s);
+      mesh.current.scale.setScalar(Math.max(s, 0.0001));
       const targetEmissive = hovered ? 0.85 : selected ? 0.6 : dimmed ? 0.04 : 0.18;
       mat.current.emissiveIntensity +=
         (targetEmissive - mat.current.emissiveIntensity) * Math.min(1, dt * 9);
@@ -144,6 +148,7 @@ function NoteOrb({ note, position, selected, dimmed, onToggle, onHoverFamily }: 
     <group ref={group} position={position}>
       <mesh
         ref={mesh}
+        scale={0.0001}
         onClick={(e) => {
           e.stopPropagation();
           onToggle(note.id);
@@ -284,13 +289,14 @@ function Scene({
         </Html>
       ))}
 
-      {placements.map((p) => (
+      {placements.map((p, i) => (
         <NoteOrb
           key={p.note.id}
           note={p.note}
           position={p.position}
           selected={selected.has(p.note.id)}
           dimmed={hoveredFamily !== null && hoveredFamily !== p.note.family}
+          appearDelay={0.15 + i * 0.025}
           onToggle={onToggle}
           onHoverFamily={setHoveredFamily}
         />

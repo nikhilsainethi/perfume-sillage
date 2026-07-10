@@ -1,20 +1,25 @@
 // ============================================================
-// SILLAGE — App root (routes)
-// Hash routing so share links work on any static host.
-// The Atelier / Shelf / Share pages are code-split.
+// SILLAGE — App root (routes + page transitions)
+// Hash routing so share links work on any static host; routes
+// cross-fade through AnimatePresence. The Atlas route's
+// transition is opacity-only ON PURPOSE: a transformed ancestor
+// would break ScrollTrigger's pinned hero. Scroll resets when a
+// new page mounts — so the Atlas ↔ /s/<id> pair (same key)
+// keeps its scroll position while the detail panel opens.
 // ============================================================
 
 import { Suspense, lazy, useEffect } from 'react';
 import { HashRouter, Route, Routes, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { Providers } from './providers';
 import { PerfumeDiscoveryPage } from '@/pages/PerfumeDiscoveryPage';
 import { AmbientBackground } from '@/shared/ui/AmbientBackground';
 import { NavBar } from '@/shared/ui/NavBar';
 import { ErrorBoundary } from '@/shared/ui/ErrorBoundary';
 import { useWebGLCapability } from '@/shared/webgl/useWebGLCapability';
+import { ease } from '@/shared/motion/motion';
 
 const AmbientWebGL = lazy(() => import('@/shared/ui/AmbientWebGL'));
-
 const AtelierPage = lazy(() =>
   import('@/features/atelier/AtelierPage').then((m) => ({ default: m.AtelierPage })),
 );
@@ -33,14 +38,6 @@ const FinderPage = lazy(() =>
   import('@/features/finder/FinderPage').then((m) => ({ default: m.FinderPage })),
 );
 
-function ScrollToTop() {
-  const { pathname } = useLocation();
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
-  }, [pathname]);
-  return null;
-}
-
 function RouteFallback() {
   return (
     <div className="grid min-h-[60vh] place-items-center">
@@ -49,6 +46,14 @@ function RouteFallback() {
       </span>
     </div>
   );
+}
+
+/** Scrolls to top when a NEW page mounts (not on atlas ↔ /s/<id> swaps). */
+function ScrollRestorer() {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+  }, []);
+  return null;
 }
 
 function Atmosphere() {
@@ -65,27 +70,51 @@ function Atmosphere() {
   );
 }
 
+function AnimatedRoutes() {
+  const location = useLocation();
+  const reduce = useReducedMotion() ?? false;
+  const isAtlas = location.pathname === '/' || location.pathname.startsWith('/s/');
+  const pageKey = isAtlas ? 'atlas' : location.pathname;
+
+  // Atlas: opacity-only (no transform → ScrollTrigger pin stays healthy).
+  const slide = !reduce && !isAtlas;
+
+  return (
+    <AnimatePresence mode="wait" initial={false}>
+      <motion.div
+        key={pageKey}
+        initial={slide ? { opacity: 0, y: 16 } : { opacity: 0 }}
+        animate={slide ? { opacity: 1, y: 0 } : { opacity: 1 }}
+        exit={slide ? { opacity: 0, y: -12 } : { opacity: 0 }}
+        transition={{ duration: reduce ? 0.15 : 0.26, ease: ease.enter }}
+      >
+        <ScrollRestorer />
+        <Suspense fallback={<RouteFallback />}>
+          <Routes location={location}>
+            <Route path="/" element={<PerfumeDiscoveryPage />} />
+            <Route path="/s/:scentId" element={<PerfumeDiscoveryPage />} />
+            <Route path="/finder" element={<FinderPage />} />
+            <Route path="/houses" element={<HousesPage mode="maisons" />} />
+            <Route path="/perfumers" element={<HousesPage mode="noses" />} />
+            <Route path="/atelier" element={<AtelierPage />} />
+            <Route path="/shelf" element={<ShelfPage />} />
+            <Route path="/c/:code" element={<SharedCreationPage />} />
+          </Routes>
+        </Suspense>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
 export default function App() {
   return (
     <Providers>
       <HashRouter>
-        <ScrollToTop />
         <div className="relative min-h-screen">
           <Atmosphere />
           <NavBar />
           <ErrorBoundary>
-            <Suspense fallback={<RouteFallback />}>
-              <Routes>
-                <Route path="/" element={<PerfumeDiscoveryPage />} />
-                <Route path="/s/:scentId" element={<PerfumeDiscoveryPage />} />
-                <Route path="/finder" element={<FinderPage />} />
-              <Route path="/houses" element={<HousesPage mode="maisons" />} />
-              <Route path="/perfumers" element={<HousesPage mode="noses" />} />
-                <Route path="/atelier" element={<AtelierPage />} />
-                <Route path="/shelf" element={<ShelfPage />} />
-                <Route path="/c/:code" element={<SharedCreationPage />} />
-              </Routes>
-            </Suspense>
+            <AnimatedRoutes />
           </ErrorBoundary>
         </div>
       </HashRouter>
