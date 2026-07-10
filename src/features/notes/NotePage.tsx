@@ -50,6 +50,7 @@ export function NotePage() {
   const navigate = useNavigate();
   const clearNotes = useDiscovery((s) => s.clearNotes);
   const toggleNote = useDiscovery((s) => s.toggleNote);
+  const setSearch = useDiscovery((s) => s.setSearch);
   const draft = useAtelier((s) => s.draft);
   const toggleDraftNote = useAtelier((s) => s.toggleDraftNote);
 
@@ -71,9 +72,10 @@ export function NotePage() {
   );
 
   const traceInAtlas = () => {
+    setSearch(''); // a navigation click starts fresh — no stale intersections
     clearNotes();
     toggleNote(note.id);
-    navigate('/');
+    navigate('/', { state: { scrollTo: 'browse' } });
   };
   const composeWithIt = () => {
     if (!inDraft) toggleDraftNote(note.id);

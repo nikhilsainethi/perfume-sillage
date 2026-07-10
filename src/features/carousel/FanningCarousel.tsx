@@ -36,6 +36,23 @@ export function FanningCarousel({ perfumes }: { perfumes: Perfume[] }) {
   const clearNotes = useDiscovery((s) => s.clearNotes);
   const sortMode = useDiscovery((s) => s.sortMode);
   const setSortMode = useDiscovery((s) => s.setSortMode);
+  const searchQuery = useDiscovery((s) => s.searchQuery);
+  const setSearch = useDiscovery((s) => s.setSearch);
+  const selectedNoteIds = useDiscovery((s) => s.selectedNoteIds);
+
+  // arriving from Houses / a note page / a perfumer credit, the fan is
+  // filtered — say so, or the deal looks arbitrary
+  const filterLabel = [
+    searchQuery.trim() && `“${searchQuery.trim()}”`,
+    selectedNoteIds.length > 0 &&
+      `${selectedNoteIds.length} note${selectedNoteIds.length > 1 ? 's' : ''}`,
+  ]
+    .filter(Boolean)
+    .join(' + ');
+  const clearFilters = () => {
+    setSearch('');
+    clearNotes();
+  };
 
   const reduce = useReducedMotion() ?? false;
   const isDesktop = useIsDesktop();
@@ -115,6 +132,17 @@ export function FanningCarousel({ perfumes }: { perfumes: Perfume[] }) {
             A fan of bottles, dealt by{' '}
             {SORTS.find((s) => s.value === sortMode)?.dealtBy ?? 'relevance'}.
           </h2>
+          {filterLabel && (
+            <button
+              type="button"
+              onClick={clearFilters}
+              title="Clear this filter and show the whole atlas"
+              className="mt-3 inline-flex items-center gap-2 rounded-chip border border-champagne bg-[rgba(176,132,60,0.1)] px-3.5 py-1.5 font-sans text-[13px] text-champagne-bright outline-none transition-colors hover:bg-[rgba(176,132,60,0.18)]"
+            >
+              Filtered by {filterLabel} · {total} match{total === 1 ? '' : 'es'}
+              <span aria-hidden className="font-mono text-[12px]">✕</span>
+            </button>
+          )}
         </div>
         <div
           role="radiogroup"

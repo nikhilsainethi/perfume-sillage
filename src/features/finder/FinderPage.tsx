@@ -137,10 +137,7 @@ export function FinderPage() {
     if (picks.length < 2) return;
     setComparisonOriginal(picks[0].perfume.id);
     setComparisonClone(picks[1].perfume.id);
-    navigate('/');
-    window.setTimeout(() => {
-      document.getElementById('compare')?.scrollIntoView({ behavior: 'instant' as ScrollBehavior });
-    }, 200);
+    navigate('/', { state: { scrollTo: 'compare' } });
   };
 
   const current = STEPS[step];

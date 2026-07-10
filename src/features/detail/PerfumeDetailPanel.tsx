@@ -67,6 +67,7 @@ export function PerfumeDetailPanel({
   const trapRef = useFocusTrap<HTMLDivElement>(true, onClose);
   const [linkCopied, setLinkCopied] = useState(false);
   const setSearch = useDiscovery((s) => s.setSearch);
+  const clearNotes = useDiscovery((s) => s.clearNotes);
   const navigate = useNavigate();
 
   const openPerfumerInAtlas = () => {
@@ -74,11 +75,9 @@ export function PerfumeDetailPanel({
     // search by the first individual name — collaborations match by substring
     const first = perfume.perfumer.split(/,|&/)[0]?.trim() ?? perfume.perfumer;
     setSearch(first);
+    clearNotes(); // a navigation click starts fresh — no stale intersections
     onClose();
-    navigate('/');
-    window.setTimeout(() => {
-      document.getElementById('discover')?.scrollIntoView({ behavior: 'instant' as ScrollBehavior });
-    }, 150);
+    navigate('/', { state: { scrollTo: 'browse' } });
   };
 
   const copyScentLink = async () => {

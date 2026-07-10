@@ -100,14 +100,15 @@ export function HousesPage({ mode = 'maisons' }: { mode?: IndexMode }) {
     [mode],
   );
   const setSearch = useDiscovery((s) => s.setSearch);
+  const clearNotes = useDiscovery((s) => s.clearNotes);
   const navigate = useNavigate();
 
   const openInAtlas = (name: string) => {
     setSearch(name);
-    navigate('/');
-    window.setTimeout(() => {
-      document.getElementById('discover')?.scrollIntoView({ behavior: 'instant' as ScrollBehavior });
-    }, 120);
+    clearNotes(); // a navigation click starts fresh — no stale intersections
+    // the atlas scrolls itself to the fan once mounted (navigation state);
+    // scrolling from here would race AnimatePresence's exit and lose
+    navigate('/', { state: { scrollTo: 'browse' } });
   };
 
   const isMaisons = mode === 'maisons';

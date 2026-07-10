@@ -6,7 +6,7 @@
 
 import { useEffect, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useAtlasCinema } from './useAtlasCinema';
 import { useDiscovery } from '@/store/discoveryStore';
 import { useActivePerfume, useOrderedPerfumes } from '@/store/selectors';
@@ -38,6 +38,21 @@ export function PerfumeDiscoveryPage() {
   // deep link: /#/s/<id> opens that scent's detail over the atlas
   const { scentId } = useParams<{ scentId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Other pages (Houses, Finder, note pages, the detail panel) send the
+  // reader here with a filter applied. They can't scroll us themselves —
+  // AnimatePresence keeps this page unmounted until their exit finishes —
+  // so they pass the target act via navigation state and WE scroll to it
+  // once mounted (after ScrollRestorer's jump-to-top and the cinema pin
+  // have settled). Without this, a filtered arrival lands on the hero and
+  // reads as a broken redirect.
+  useEffect(() => {
+    const target = (location.state as { scrollTo?: string } | null)?.scrollTo;
+    if (!target) return;
+    const t = window.setTimeout(() => scrollToId(target), 350);
+    return () => window.clearTimeout(t);
+  }, [location.state]);
   useEffect(() => {
     if (!scentId) return;
     if (PERFUME_BY_ID[scentId]) openDetail(scentId);
