@@ -59,6 +59,31 @@ export function deriveSeasons(accords: Accord[]): Season[] {
   return ['spring', 'autumn'];
 }
 
+/** Moods & occasions inferred from character + volume. Used when the source
+ *  data doesn't say when to wear it (imported scents), so "When to wear"
+ *  never renders as a bare season list. */
+export function deriveContext(
+  accords: Accord[],
+  performance: PerformanceProfile,
+): { moods: string[]; occasions: string[] } {
+  const moods: string[] = [];
+  if (familyShare(accords, ['amber', 'sweet']) > 0.35) moods.push('sensual', 'cozy');
+  else if (familyShare(accords, ['citrus', 'fresh']) > 0.35) moods.push('crisp', 'energetic');
+  else if (familyShare(accords, ['floral']) > 0.3) moods.push('romantic', 'graceful');
+  else if (familyShare(accords, ['leather']) > 0.2) moods.push('nocturnal', 'bold');
+  else if (familyShare(accords, ['woody']) > 0.3) moods.push('composed', 'refined');
+  else moods.push('versatile', 'polished');
+  if (familyShare(accords, ['spicy']) > 0.22 && !moods.includes('bold')) moods.push('bold');
+
+  const occasions =
+    performance.projection >= 8
+      ? ['evenings out', 'statements']
+      : performance.projection <= 5
+        ? ['the office', 'daily wear']
+        : ['daily wear', 'evenings'];
+  return { moods: moods.slice(0, 3), occasions };
+}
+
 /** Rough-but-honest performance heuristic for compositions & imported scents.
  *  Freshness actively PENALIZES longevity/projection — a featherweight citrus
  *  must not read like an amber bomb just because the math centered it. */

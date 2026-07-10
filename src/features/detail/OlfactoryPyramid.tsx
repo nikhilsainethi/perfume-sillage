@@ -3,11 +3,14 @@
 // Top / heart / base in three tiers, notes sized by intensity
 // and accord-colored. Registers each note element so the
 // comparison's NoteConnectionMap can draw between matches.
+// Each chip navigates to the note's own page (/n/<id>).
 // ============================================================
 
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import type { NotePosition, NotePyramid } from '@/domain/types';
 import { NOTES } from '@/data/notes';
+import { useDiscovery } from '@/store/discoveryStore';
 import { ease, stagger } from '@/shared/motion/motion';
 
 const TIERS: NotePosition[] = ['top', 'heart', 'base'];
@@ -33,6 +36,12 @@ export function OlfactoryPyramid({
 }) {
   const highlight = new Set(highlightNoteIds);
   const dimColor = side === 'clone' ? 'rgba(201,154,146,0.5)' : 'rgba(184,118,62,0.5)';
+  const navigate = useNavigate();
+  const closeDetail = useDiscovery((s) => s.closeDetail);
+  const openNote = (noteId: string) => {
+    closeDetail(); // leaving the atlas — don't reopen the panel on return
+    navigate(`/n/${noteId}`);
+  };
 
   return (
     <div className="flex flex-col items-stretch gap-5">
@@ -51,17 +60,21 @@ export function OlfactoryPyramid({
               const shared = highlight.has(n.noteId);
               const faded = dimUnmatched && !shared;
               return (
-                <motion.span
+                <motion.button
                   key={n.noteId}
+                  type="button"
                   ref={(el) => registerNoteRef?.(n.noteId, el)}
+                  onClick={() => openNote(n.noteId)}
+                  title={`Every scent that carries ${name}`}
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: faded ? 0.55 : 1, scale: 1 }}
+                  whileHover={{ scale: 1.06 }}
                   transition={{
                     delay: ti * 0.12 + ni * stagger.notes,
                     duration: 0.42,
                     ease: ease.enter,
                   }}
-                  className="inline-flex items-center gap-1.5 rounded-chip px-3 py-1 font-sans"
+                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-chip px-3 py-1 font-sans outline-none"
                   style={{
                     fontSize: 12 + n.intensity * 4,
                     border: shared
@@ -77,7 +90,7 @@ export function OlfactoryPyramid({
                     style={{ background: note?.color ?? '#9A9082' }}
                   />
                   {name}
-                </motion.span>
+                </motion.button>
               );
             })}
           </div>

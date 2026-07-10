@@ -37,6 +37,9 @@ const HousesPage = lazy(() =>
 const FinderPage = lazy(() =>
   import('@/features/finder/FinderPage').then((m) => ({ default: m.FinderPage })),
 );
+const NotePage = lazy(() =>
+  import('@/features/notes/NotePage').then((m) => ({ default: m.NotePage })),
+);
 
 function RouteFallback() {
   return (
@@ -94,6 +97,7 @@ function AnimatedRoutes() {
             <Route path="/" element={<PerfumeDiscoveryPage />} />
             <Route path="/s/:scentId" element={<PerfumeDiscoveryPage />} />
             <Route path="/finder" element={<FinderPage />} />
+            <Route path="/n/:noteId" element={<NotePage />} />
             <Route path="/houses" element={<HousesPage mode="maisons" />} />
             <Route path="/perfumers" element={<HousesPage mode="noses" />} />
             <Route path="/atelier" element={<AtelierPage />} />

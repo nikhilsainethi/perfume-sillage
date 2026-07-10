@@ -12,7 +12,7 @@ import type {
   Perfume,
   SeasonMood,
 } from '../domain/types.ts';
-import { deriveAccords, derivePerformance } from '../domain/derive.ts';
+import { deriveAccords, deriveContext, derivePerformance } from '../domain/derive.ts';
 import { NOTES, FAMILY_COLOR } from './notes.ts';
 import { RAW, type RawPerfume } from './catalogData.ts';
 import { IMPORTED } from './catalogImported.ts';
@@ -59,6 +59,10 @@ function build(raw: RawPerfume): Perfume {
     ? derivePerformance(pyramid, accords)
     : { longevity: raw.perf[0], projection: raw.perf[1], sillage: raw.perf[2] };
 
+  // hand-authored moods/occasions win; otherwise infer them so
+  // "When to wear" never renders as a bare season list
+  const ctx = deriveContext(accords, performance);
+
   return {
     id: raw.id,
     name: raw.name,
@@ -76,8 +80,8 @@ function build(raw: RawPerfume): Perfume {
     performance,
     context: {
       seasons: raw.seasons ?? DEFAULT_SEASONS,
-      moods: raw.moods ?? [],
-      occasions: raw.occasions ?? [],
+      moods: raw.moods?.length ? raw.moods : ctx.moods,
+      occasions: raw.occasions?.length ? raw.occasions : ctx.occasions,
     },
     description: raw.desc,
     inspiredByOriginalId: raw.inspiredBy,

@@ -84,7 +84,11 @@ const STEPS: Step[] = [
     eyebrow: 'Five of five',
     title: 'A note you already love?',
     options: [
-      ...['vanilla', 'rose', 'oud', 'bergamot', 'tobacco', 'iris', 'coconut', 'coffee'].map(
+      ...[
+        'vanilla', 'rose', 'oud', 'bergamot',
+        'tobacco', 'iris', 'coconut', 'coffee',
+        'sandalwood', 'vetiver', 'leather', 'amber',
+      ].map(
         (id) => ({
           value: id,
           label: NOTES[id]?.name ?? id,

@@ -18,6 +18,7 @@ import { RELATIONSHIPS } from '@/data/relationships';
 
 export type TypeFilter = 'all' | 'original' | 'clone';
 export type MatchMode = 'exact' | 'partial';
+export type SortMode = 'relevance' | 'year' | 'name' | 'house';
 
 export interface DiscoveryStore {
   // --- data (loaded once) ---
@@ -32,6 +33,7 @@ export interface DiscoveryStore {
   typeFilter: TypeFilter;
   matchMode: MatchMode;
   linkClones: boolean;
+  sortMode: SortMode;
 
   // --- view ---
   activeIndex: number;
@@ -49,6 +51,7 @@ export interface DiscoveryStore {
   setTypeFilter(t: TypeFilter): void;
   setMatchMode(m: MatchMode): void;
   toggleLinkClones(): void;
+  setSortMode(m: SortMode): void;
   setActiveIndex(i: number): void;
   next(): void;
   prev(): void;
@@ -73,6 +76,7 @@ export const useDiscovery = create<DiscoveryStore>((set) => ({
   typeFilter: 'all',
   matchMode: 'partial',
   linkClones: false,
+  sortMode: 'relevance',
 
   activeIndex: 0,
   hoveredPerfumeId: null,
@@ -100,6 +104,7 @@ export const useDiscovery = create<DiscoveryStore>((set) => ({
   setTypeFilter: (t) => set({ typeFilter: t, activeIndex: 0 }),
   setMatchMode: (m) => set({ matchMode: m, activeIndex: 0 }),
   toggleLinkClones: () => set((s) => ({ linkClones: !s.linkClones, activeIndex: 0 })),
+  setSortMode: (m) => set({ sortMode: m, activeIndex: 0 }),
 
   setActiveIndex: (i) => set({ activeIndex: Math.max(0, i) }),
   next: () => set((s) => ({ activeIndex: s.activeIndex + 1 })),

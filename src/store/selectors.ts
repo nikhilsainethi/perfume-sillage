@@ -115,10 +115,28 @@ export function useMatches(): NoteMatch[] {
   ]);
 }
 
-/** Ordered perfumes for the carousel. */
+/** Ordered perfumes for the carousel. Relevance keeps the matcher's
+ *  weighted order; the other modes re-deal the same filtered set. */
 export function useOrderedPerfumes(): Perfume[] {
   const matches = useMatches();
-  return useMemo(() => matches.map((m) => m.perfume), [matches]);
+  const sortMode = useDiscovery((s) => s.sortMode);
+  return useMemo(() => {
+    const list = matches.map((m) => m.perfume);
+    switch (sortMode) {
+      case 'year':
+        return [...list].sort(
+          (a, b) => (a.year ?? 9999) - (b.year ?? 9999) || a.name.localeCompare(b.name),
+        );
+      case 'name':
+        return [...list].sort((a, b) => a.name.localeCompare(b.name));
+      case 'house':
+        return [...list].sort(
+          (a, b) => a.brand.localeCompare(b.brand) || a.name.localeCompare(b.name),
+        );
+      default:
+        return list;
+    }
+  }, [matches, sortMode]);
 }
 
 export function useExactCount(): number {

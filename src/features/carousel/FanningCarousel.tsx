@@ -9,13 +9,20 @@ import { useEffect, useRef } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import type { PanInfo } from 'framer-motion';
 import type { Perfume } from '@/domain/types';
-import { useDiscovery } from '@/store/discoveryStore';
+import { useDiscovery, type SortMode } from '@/store/discoveryStore';
 import { useIsDesktop, useIsTablet } from '@/shared/hooks/useMediaQuery';
 import { PerfumeFanCard } from './PerfumeFanCard';
 import { CarouselControls } from './CarouselControls';
 import { CarouselEmptyState } from './CarouselEmptyState';
 
 const DRAG_THRESHOLD = 130; // px per index step
+
+const SORTS: { value: SortMode; label: string; dealtBy: string }[] = [
+  { value: 'relevance', label: 'Relevance', dealtBy: 'relevance' },
+  { value: 'year', label: 'Year', dealtBy: 'vintage' },
+  { value: 'name', label: 'A–Z', dealtBy: 'name' },
+  { value: 'house', label: 'House', dealtBy: 'house' },
+];
 
 export function FanningCarousel({ perfumes }: { perfumes: Perfume[] }) {
   const activeIndex = useDiscovery((s) => s.activeIndex);
@@ -27,6 +34,8 @@ export function FanningCarousel({ perfumes }: { perfumes: Perfume[] }) {
   const matchMode = useDiscovery((s) => s.matchMode);
   const setMatchMode = useDiscovery((s) => s.setMatchMode);
   const clearNotes = useDiscovery((s) => s.clearNotes);
+  const sortMode = useDiscovery((s) => s.sortMode);
+  const setSortMode = useDiscovery((s) => s.setSortMode);
 
   const reduce = useReducedMotion() ?? false;
   const isDesktop = useIsDesktop();
@@ -97,13 +106,38 @@ export function FanningCarousel({ perfumes }: { perfumes: Perfume[] }) {
       aria-label="Fragrance carousel"
       className="relative w-full"
     >
-      <div className="mx-auto mb-2 max-w-[1180px] px-5 sm:px-8">
-        <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-champagne">
-          Act II — Browse
-        </span>
-        <h2 className="mt-3 max-w-[20ch] font-display text-[clamp(28px,5vw,46px)] leading-[1.07] text-parchment">
-          A fan of bottles, dealt by relevance.
-        </h2>
+      <div className="mx-auto mb-2 flex max-w-[1180px] flex-wrap items-end justify-between gap-x-8 gap-y-4 px-5 sm:px-8">
+        <div>
+          <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-champagne">
+            Act II — Browse
+          </span>
+          <h2 className="mt-3 max-w-[20ch] font-display text-[clamp(28px,5vw,46px)] leading-[1.07] text-parchment">
+            A fan of bottles, dealt by{' '}
+            {SORTS.find((s) => s.value === sortMode)?.dealtBy ?? 'relevance'}.
+          </h2>
+        </div>
+        <div
+          role="radiogroup"
+          aria-label="Sort order"
+          className="mb-1 flex items-center gap-1 rounded-full border border-[var(--line)] bg-[#FFFFFF] p-1"
+        >
+          {SORTS.map((s) => (
+            <button
+              key={s.value}
+              type="button"
+              role="radio"
+              aria-checked={sortMode === s.value}
+              onClick={() => setSortMode(s.value)}
+              className={`rounded-full px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] outline-none transition-colors ${
+                sortMode === s.value
+                  ? 'bg-champagne text-[#FFFDF8]'
+                  : 'text-parchment-dim hover:text-champagne-bright'
+              }`}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div
