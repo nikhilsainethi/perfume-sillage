@@ -137,7 +137,7 @@ export function FinderPage() {
     if (picks.length < 2) return;
     setComparisonOriginal(picks[0].perfume.id);
     setComparisonClone(picks[1].perfume.id);
-    navigate('/', { state: { scrollTo: 'compare' } });
+    navigate('/discover', { state: { scrollTo: 'compare' } });
   };
 
   const current = STEPS[step];

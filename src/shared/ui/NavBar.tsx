@@ -15,7 +15,8 @@ import { useAtelier } from '@/store/atelierStore';
 import { useDiscovery } from '@/store/discoveryStore';
 
 const LINKS = [
-  { to: '/', label: 'Atlas', end: true },
+  { to: '/library', label: 'Library', end: false },
+  { to: '/discover', label: 'Discover', end: false },
   { to: '/finder', label: 'Finder', end: false },
   { to: '/houses', label: 'Houses', end: false },
   { to: '/atelier', label: 'Atelier', end: false },
@@ -43,7 +44,7 @@ export function NavBar() {
     if (!q) return;
     setSearch(q);
     clearNotes();
-    navigate('/', { state: { scrollTo: 'browse' } });
+    navigate('/library'); // results ARE the page — no scroll gymnastics
   };
 
   return (

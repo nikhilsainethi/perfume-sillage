@@ -12,7 +12,8 @@ import { Suspense, lazy, useEffect } from 'react';
 import { HashRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Providers } from './providers';
-import { PerfumeDiscoveryPage } from '@/pages/PerfumeDiscoveryPage';
+import { HomePage } from '@/pages/HomePage';
+import { LibraryPage } from '@/pages/LibraryPage';
 import { AmbientBackground } from '@/shared/ui/AmbientBackground';
 import { NavBar } from '@/shared/ui/NavBar';
 import { ErrorBoundary } from '@/shared/ui/ErrorBoundary';
@@ -36,6 +37,9 @@ const HousesPage = lazy(() =>
 );
 const FinderPage = lazy(() =>
   import('@/features/finder/FinderPage').then((m) => ({ default: m.FinderPage })),
+);
+const DiscoverPage = lazy(() =>
+  import('@/pages/DiscoverPage').then((m) => ({ default: m.DiscoverPage })),
 );
 const NotePage = lazy(() =>
   import('@/features/notes/NotePage').then((m) => ({ default: m.NotePage })),
@@ -76,11 +80,15 @@ function Atmosphere() {
 function AnimatedRoutes() {
   const location = useLocation();
   const reduce = useReducedMotion() ?? false;
-  const isAtlas = location.pathname === '/' || location.pathname.startsWith('/s/');
-  const pageKey = isAtlas ? 'atlas' : location.pathname;
+  // /library and /s/<id> are ONE surface: opening a scent must not remount
+  // the page (the panel slides over the grid, scroll position intact).
+  const isLibrary =
+    location.pathname === '/library' || location.pathname.startsWith('/s/');
+  const pageKey = isLibrary ? 'library' : location.pathname;
 
-  // Atlas: opacity-only (no transform → ScrollTrigger pin stays healthy).
-  const slide = !reduce && !isAtlas;
+  // Home hosts a ScrollTrigger PIN: its entrance must be opacity-only, a
+  // transformed ancestor would corrupt the pin's measurements.
+  const slide = !reduce && location.pathname !== '/';
 
   // NO AnimatePresence here — mode="wait" makes mounting the NEXT page
   // depend on the OLD page's exit callback, and framer's exit completion
@@ -96,8 +104,10 @@ function AnimatedRoutes() {
       <ScrollRestorer />
       <Suspense fallback={<RouteFallback />}>
         <Routes location={location}>
-          <Route path="/" element={<PerfumeDiscoveryPage />} />
-          <Route path="/s/:scentId" element={<PerfumeDiscoveryPage />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/library" element={<LibraryPage />} />
+          <Route path="/s/:scentId" element={<LibraryPage />} />
+          <Route path="/discover" element={<DiscoverPage />} />
           <Route path="/finder" element={<FinderPage />} />
           <Route path="/n/:noteId" element={<NotePage />} />
           <Route path="/houses" element={<HousesPage mode="maisons" />} />

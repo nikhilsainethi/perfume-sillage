@@ -25,7 +25,15 @@ const SORTS: { value: SortMode; label: string; dealtBy: string }[] = [
   { value: 'house', label: 'House', dealtBy: 'house' },
 ];
 
-export function FanningCarousel({ perfumes }: { perfumes: Perfume[] }) {
+export function FanningCarousel({
+  perfumes,
+  eyebrow = 'Act II — Browse',
+  titlePrefix = 'A fan of bottles, dealt by',
+}: {
+  perfumes: Perfume[];
+  eyebrow?: string;
+  titlePrefix?: string;
+}) {
   const activeIndex = useDiscovery((s) => s.activeIndex);
   const setActiveIndex = useDiscovery((s) => s.setActiveIndex);
   const next = useDiscovery((s) => s.next);
@@ -134,10 +142,10 @@ export function FanningCarousel({ perfumes }: { perfumes: Perfume[] }) {
       <div className="mx-auto mb-2 flex max-w-[1180px] flex-wrap items-end justify-between gap-x-8 gap-y-4 px-5 sm:px-8">
         <div>
           <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-champagne-bright">
-            Act II — Browse
+            {eyebrow}
           </span>
           <h2 className="mt-3 max-w-[20ch] font-display text-[clamp(28px,5vw,46px)] leading-[1.07] text-parchment">
-            A fan of bottles, dealt by{' '}
+            {titlePrefix}{' '}
             {SORTS.find((s) => s.value === sortMode)?.dealtBy ?? 'relevance'}.
           </h2>
           {filterLabel && (

@@ -75,7 +75,7 @@ export function NotePage() {
     setSearch(''); // a navigation click starts fresh — no stale intersections
     clearNotes();
     toggleNote(note.id);
-    navigate('/', { state: { scrollTo: 'browse' } });
+    navigate('/library');
   };
   const composeWithIt = () => {
     if (!inDraft) toggleDraftNote(note.id);

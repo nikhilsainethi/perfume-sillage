@@ -77,7 +77,7 @@ export function PerfumeDetailPanel({
     setSearch(first);
     clearNotes(); // a navigation click starts fresh — no stale intersections
     onClose();
-    navigate('/', { state: { scrollTo: 'browse' } });
+    navigate('/library');
   };
 
   const copyScentLink = async () => {

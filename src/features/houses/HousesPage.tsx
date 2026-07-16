@@ -106,9 +106,7 @@ export function HousesPage({ mode = 'maisons' }: { mode?: IndexMode }) {
   const openInAtlas = (name: string) => {
     setSearch(name);
     clearNotes(); // a navigation click starts fresh — no stale intersections
-    // the atlas scrolls itself to the fan once mounted (navigation state);
-    // scrolling from here would race AnimatePresence's exit and lose
-    navigate('/', { state: { scrollTo: 'browse' } });
+    navigate('/library'); // the Library IS the results page — no scrolling
   };
 
   const isMaisons = mode === 'maisons';

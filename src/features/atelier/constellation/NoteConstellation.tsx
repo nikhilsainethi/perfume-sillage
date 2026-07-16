@@ -321,11 +321,14 @@ export default function NoteConstellation({
   selectedIds,
   onToggle,
   height = 560,
+  hint = 'drag to orbit · click a note to compose',
 }: {
   notes: FragranceNote[];
   selectedIds: string[];
   onToggle: (id: string) => void;
   height?: number;
+  /** caption under the canvas; pass '' when the host provides its own */
+  hint?: string;
 }) {
   return (
     <div
@@ -341,9 +344,11 @@ export default function NoteConstellation({
       >
         <Scene notes={notes} selectedIds={selectedIds} onToggle={onToggle} />
       </Canvas>
-      <span className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted">
-        drag to orbit · click a note to compose
-      </span>
+      {hint && (
+        <span className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted">
+          {hint}
+        </span>
+      )}
     </div>
   );
 }
