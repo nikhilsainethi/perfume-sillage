@@ -114,7 +114,7 @@ export function AtlasPlacement({
       className="rounded-panel border border-[var(--line)] bg-smoke/60 p-6 sm:p-7"
       aria-label="Your place in the atlas"
     >
-      <h3 className="mb-1 font-mono text-[11px] uppercase tracking-[0.18em] text-champagne">
+      <h3 className="mb-1 font-mono text-[11px] uppercase tracking-[0.18em] text-champagne-bright">
         Your place in the atlas
       </h3>
       <p className="mb-5 font-sans text-[13px] text-muted">
@@ -142,7 +142,7 @@ export function AtlasPlacement({
               </div>
               <span className="font-sans text-[12px] text-muted">{perfume.brand}</span>
             </div>
-            <span className="shrink-0 font-display text-[22px] text-champagne">
+            <span className="shrink-0 font-display text-[22px] text-champagne-bright">
               {overall}
               <span className="ml-0.5 font-sans text-[11px] text-muted">%</span>
             </span>

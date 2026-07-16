@@ -90,7 +90,7 @@ export function NotePage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: ease.enter }}
       >
-        <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-champagne">
+        <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-champagne-bright">
           Raw material
         </span>
         <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-3">
@@ -123,7 +123,7 @@ export function NotePage() {
         {/* ---- how the atlas uses it ---- */}
         <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[12px] tracking-[0.06em] text-parchment-dim">
           <span>
-            <span className="text-champagne">{carriers.length}</span> of {PERFUMES.length}{' '}
+            <span className="text-champagne-bright">{carriers.length}</span> of {PERFUMES.length}{' '}
             scents carry it
           </span>
           <span aria-hidden className="hidden h-3 w-px bg-[var(--line)] sm:inline-block" />

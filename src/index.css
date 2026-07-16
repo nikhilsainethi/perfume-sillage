@@ -46,8 +46,23 @@
     border: 1px solid var(--line);
   }
 
+  /* The nav bar is NEAR-OPAQUE on purpose: at 72% the section eyebrows,
+     profile cards and constellation labels ghosted through beneath it. */
+  .glass-nav {
+    background: rgba(250, 248, 244, 0.94);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
   .text-balance {
     text-wrap: balance;
+  }
+
+  /* anchored scrolls stop below the sticky nav, not underneath it */
+  #discover,
+  #browse,
+  #compare {
+    scroll-margin-top: 72px;
   }
 
   /* Thin, warm scrollbars */

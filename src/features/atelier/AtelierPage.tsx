@@ -6,7 +6,8 @@
 // ============================================================
 
 import { motion } from 'framer-motion';
-import { NOTES_LIST, WHEEL_NOTES } from '@/data/notes';
+import type { NotePyramid } from '@/domain/types';
+import { NOTES, NOTES_LIST, WHEEL_NOTES } from '@/data/notes';
 import { PERFUMES } from '@/data/perfumes';
 import { TIER_CAP } from '@/domain/creation';
 import { useAtelier } from '@/store/atelierStore';
@@ -53,7 +54,7 @@ export function AtelierPage() {
         transition={{ duration: 0.6, ease: ease.enter }}
         className="mb-10 flex flex-col gap-3"
       >
-        <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-champagne">
+        <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-champagne-bright">
           The Atelier
         </span>
         <h1 className="max-w-[16ch] font-display text-[clamp(36px,6.4vw,60px)] leading-[1.02] text-parchment">
@@ -91,10 +92,12 @@ export function AtelierPage() {
 
         {/* the living composition */}
         <motion.div
+          id="composition"
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.65, ease: ease.enter, delay: 0.22 }}
           className="flex flex-col gap-6"
+          style={{ scrollMarginTop: 72 }}
         >
           <CompositionPanel draftPerfume={analysis.perfume} />
           <AnalysisPanel perfume={analysis.perfume} count={analysis.count} line={analysis.line} />
@@ -102,6 +105,44 @@ export function AtelierPage() {
           <AtlasPlacement neighbors={analysis.neighbors} creation={analysis.perfume} />
         </motion.div>
       </div>
+
+      <MobileComposeBar pyramid={draftPyramid} />
     </main>
+  );
+}
+
+/** On a phone the composition panel lives below the whole note picker, so a
+ *  tap up top gave zero feedback — you scrolled five screens to see it land.
+ *  This fixed bar mirrors the pyramid live and jumps to the panel on tap. */
+function MobileComposeBar({ pyramid }: { pyramid: NotePyramid }) {
+  const total = pyramid.top.length + pyramid.heart.length + pyramid.base.length;
+  const lastAdded = [...pyramid.top, ...pyramid.heart, ...pyramid.base].at(-1);
+  const lastName = lastAdded ? NOTES[lastAdded.noteId]?.name : undefined;
+  return (
+    <div className="glass-nav fixed inset-x-0 bottom-0 z-30 border-t border-[var(--line)] lg:hidden">
+      <button
+        type="button"
+        onClick={() =>
+          document.getElementById('composition')?.scrollIntoView({ behavior: 'smooth' })
+        }
+        className="mx-auto flex h-14 w-full max-w-[640px] items-center justify-between gap-3 px-5 outline-none"
+      >
+        <span className="min-w-0 truncate text-left font-sans text-[13px] text-parchment-dim">
+          {total === 0
+            ? 'Tap notes above to compose'
+            : lastName
+              ? `Added ${lastName}`
+              : `${total} note${total > 1 ? 's' : ''} placed`}
+        </span>
+        <span className="flex shrink-0 items-center gap-3">
+          <span className="font-mono text-[11px] tracking-[0.08em] text-champagne-bright">
+            T{pyramid.top.length} · H{pyramid.heart.length} · B{pyramid.base.length}
+          </span>
+          <span className="rounded-chip bg-champagne px-3 py-1.5 font-sans text-[12px] font-medium text-ink">
+            View ↓
+          </span>
+        </span>
+      </button>
+    </div>
   );
 }

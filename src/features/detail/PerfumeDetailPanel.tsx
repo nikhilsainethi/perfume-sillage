@@ -36,7 +36,7 @@ const CONCENTRATION_LABEL: Record<string, string> = {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section>
-      <h3 className="mb-4 font-mono text-[11px] uppercase tracking-[0.18em] text-champagne">
+      <h3 className="mb-4 font-mono text-[11px] uppercase tracking-[0.18em] text-champagne-bright">
         {title}
       </h3>
       {children}
@@ -117,8 +117,20 @@ export function PerfumeDetailPanel({
   ].filter(Boolean);
 
   const slide = isMobile
-    ? { initial: { y: '100%' }, animate: { y: 0 }, exit: { y: '100%' } }
-    : { initial: { x: '100%' }, animate: { x: 0 }, exit: { x: '100%' } };
+    // Exit is a FADE on purpose: transform exits (x/y '100%') silently never
+    // started on this portal'd panel — AnimatePresence then kept a zombie
+    // panel + click-blocking overlay over the whole page after every close.
+    // Opacity exits complete reliably here (the backdrop proves it nightly).
+    ? {
+        initial: { y: '100%' },
+        animate: { y: 0 },
+        exit: { opacity: 0, transition: { duration: 0.22, ease: 'easeIn' as const } },
+      }
+    : {
+        initial: { x: '100%' },
+        animate: { x: 0 },
+        exit: { opacity: 0, transition: { duration: 0.22, ease: 'easeIn' as const } },
+      };
 
   return createPortal(
     <div className="fixed inset-0 z-50">
@@ -177,8 +189,14 @@ export function PerfumeDetailPanel({
                   : undefined,
               }}
             >
+              {/* NO layoutId here: sharing one with the fan card pinned the
+                  exiting panel's transform at identity, so the exit slide
+                  never ran and AnimatePresence kept a zombie panel over the
+                  page. The morph was cosmetic; closing has to work. */}
               <motion.div
-                layoutId={`bottle-${perfume.id}`}
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.35, ease: 'easeOut' }}
                 className="aspect-[4/5] w-[230px] overflow-hidden rounded-panel border border-[var(--line)] bg-white shadow-e1"
               >
                 <BottleVisual perfume={perfume} variant="tile" />
@@ -320,7 +338,7 @@ export function PerfumeDetailPanel({
                         </span>
                       </span>
                     </button>
-                    <span className="shrink-0 font-display text-[19px] text-champagne">
+                    <span className="shrink-0 font-display text-[19px] text-champagne-bright">
                       {overall}
                       <span className="ml-0.5 font-sans text-[10px] text-muted">%</span>
                     </span>

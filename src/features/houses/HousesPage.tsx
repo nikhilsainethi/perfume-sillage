@@ -121,7 +121,7 @@ export function HousesPage({ mode = 'maisons' }: { mode?: IndexMode }) {
         transition={{ duration: 0.6, ease: ease.enter }}
         className="mb-10 flex flex-col gap-4"
       >
-        <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-champagne">
+        <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-champagne-bright">
           {isMaisons ? 'The Maisons' : 'The Noses'}
         </span>
         <h1 className="max-w-[20ch] font-display text-[clamp(34px,6vw,56px)] leading-[1.03] text-parchment">

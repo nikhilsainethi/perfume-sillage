@@ -24,7 +24,7 @@ export function SimilarityReadout({ score }: { score: SimilarityScore }) {
           Overall similarity
         </span>
         <span
-          className="font-display text-[40px] leading-none text-champagne"
+          className="font-display text-[40px] leading-none text-champagne-bright"
           aria-label={`Overall similarity ${pct} percent`}
         >
           {pct}

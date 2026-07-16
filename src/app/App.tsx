@@ -10,7 +10,7 @@
 
 import { Suspense, lazy, useEffect } from 'react';
 import { HashRouter, Route, Routes, useLocation } from 'react-router-dom';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Providers } from './providers';
 import { PerfumeDiscoveryPage } from '@/pages/PerfumeDiscoveryPage';
 import { AmbientBackground } from '@/shared/ui/AmbientBackground';
@@ -82,31 +82,32 @@ function AnimatedRoutes() {
   // Atlas: opacity-only (no transform → ScrollTrigger pin stays healthy).
   const slide = !reduce && !isAtlas;
 
+  // NO AnimatePresence here — mode="wait" makes mounting the NEXT page
+  // depend on the OLD page's exit callback, and framer's exit completion
+  // proved unreliable (stuck routes: URL changes, page doesn't). A keyed
+  // remount with an entrance animation is just as polished and can't hang.
   return (
-    <AnimatePresence mode="wait" initial={false}>
-      <motion.div
-        key={pageKey}
-        initial={slide ? { opacity: 0, y: 16 } : { opacity: 0 }}
-        animate={slide ? { opacity: 1, y: 0 } : { opacity: 1 }}
-        exit={slide ? { opacity: 0, y: -12 } : { opacity: 0 }}
-        transition={{ duration: reduce ? 0.15 : 0.26, ease: ease.enter }}
-      >
-        <ScrollRestorer />
-        <Suspense fallback={<RouteFallback />}>
-          <Routes location={location}>
-            <Route path="/" element={<PerfumeDiscoveryPage />} />
-            <Route path="/s/:scentId" element={<PerfumeDiscoveryPage />} />
-            <Route path="/finder" element={<FinderPage />} />
-            <Route path="/n/:noteId" element={<NotePage />} />
-            <Route path="/houses" element={<HousesPage mode="maisons" />} />
-            <Route path="/perfumers" element={<HousesPage mode="noses" />} />
-            <Route path="/atelier" element={<AtelierPage />} />
-            <Route path="/shelf" element={<ShelfPage />} />
-            <Route path="/c/:code" element={<SharedCreationPage />} />
-          </Routes>
-        </Suspense>
-      </motion.div>
-    </AnimatePresence>
+    <motion.div
+      key={pageKey}
+      initial={slide ? { opacity: 0, y: 16 } : { opacity: 0 }}
+      animate={slide ? { opacity: 1, y: 0 } : { opacity: 1 }}
+      transition={{ duration: reduce ? 0.15 : 0.26, ease: ease.enter }}
+    >
+      <ScrollRestorer />
+      <Suspense fallback={<RouteFallback />}>
+        <Routes location={location}>
+          <Route path="/" element={<PerfumeDiscoveryPage />} />
+          <Route path="/s/:scentId" element={<PerfumeDiscoveryPage />} />
+          <Route path="/finder" element={<FinderPage />} />
+          <Route path="/n/:noteId" element={<NotePage />} />
+          <Route path="/houses" element={<HousesPage mode="maisons" />} />
+          <Route path="/perfumers" element={<HousesPage mode="noses" />} />
+          <Route path="/atelier" element={<AtelierPage />} />
+          <Route path="/shelf" element={<ShelfPage />} />
+          <Route path="/c/:code" element={<SharedCreationPage />} />
+        </Routes>
+      </Suspense>
+    </motion.div>
   );
 }
 

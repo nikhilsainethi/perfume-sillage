@@ -55,7 +55,7 @@ export function CarouselControls({
 
       <div className="flex w-[min(60vw,420px)] flex-col items-center gap-2">
         <span className="font-mono text-[12px] tracking-[0.08em] text-parchment-dim">
-          <span className="text-champagne">{String(activeIndex + 1).padStart(2, '0')}</span>
+          <span className="text-champagne-bright">{String(activeIndex + 1).padStart(2, '0')}</span>
           <span className="mx-1.5 text-muted">/</span>
           {total}
         </span>

@@ -25,7 +25,7 @@ export function AnalysisPanel({
       className="rounded-panel border border-[var(--line)] bg-smoke/60 p-6 sm:p-7"
       aria-label="Live analysis"
     >
-      <h3 className="mb-4 font-mono text-[11px] uppercase tracking-[0.18em] text-champagne">
+      <h3 className="mb-4 font-mono text-[11px] uppercase tracking-[0.18em] text-champagne-bright">
         The reading
       </h3>
 

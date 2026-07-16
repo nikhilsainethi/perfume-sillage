@@ -106,7 +106,7 @@ export function SharedCreationPage() {
         </div>
 
         <div className="border-t border-[var(--line)] px-6 py-8 sm:px-12">
-          <h2 className="mb-5 text-center font-mono text-[11px] uppercase tracking-[0.18em] text-champagne">
+          <h2 className="mb-5 text-center font-mono text-[11px] uppercase tracking-[0.18em] text-champagne-bright">
             The pyramid
           </h2>
           <OlfactoryPyramid pyramid={decoded.pyramid} />
@@ -114,13 +114,13 @@ export function SharedCreationPage() {
 
         <div className="grid grid-cols-1 gap-8 border-t border-[var(--line)] px-6 py-8 sm:grid-cols-2 sm:px-12">
           <div>
-            <h2 className="mb-4 font-mono text-[11px] uppercase tracking-[0.18em] text-champagne">
+            <h2 className="mb-4 font-mono text-[11px] uppercase tracking-[0.18em] text-champagne-bright">
               Accord profile
             </h2>
             <AccordBar accords={perfume.accords} />
           </div>
           <div>
-            <h2 className="mb-4 font-mono text-[11px] uppercase tracking-[0.18em] text-champagne">
+            <h2 className="mb-4 font-mono text-[11px] uppercase tracking-[0.18em] text-champagne-bright">
               Projected performance
             </h2>
             <PerformanceMeters performance={perfume.performance} />

@@ -28,7 +28,7 @@ export function CarouselEmptyState({
     >
       <span
         aria-hidden
-        className="grid h-16 w-16 place-items-center rounded-full border border-[var(--line)] text-champagne"
+        className="grid h-16 w-16 place-items-center rounded-full border border-[var(--line)] text-champagne-bright"
       >
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
           <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.4" />

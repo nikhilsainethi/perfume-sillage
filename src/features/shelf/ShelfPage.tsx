@@ -75,7 +75,7 @@ export function ShelfPage() {
         className="mb-10 flex flex-wrap items-end justify-between gap-4"
       >
         <div className="flex flex-col gap-3">
-          <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-champagne">
+          <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-champagne-bright">
             My Shelf
           </span>
           <h1 className="font-display text-[clamp(34px,6vw,56px)] leading-[1.03] text-parchment">
@@ -86,7 +86,7 @@ export function ShelfPage() {
         </div>
         <div className="flex items-center gap-2.5">
           {importNote && (
-            <span className="font-sans text-[12px] italic text-champagne">{importNote}</span>
+            <span className="font-sans text-[12px] italic text-champagne-bright">{importNote}</span>
           )}
           <button
             type="button"

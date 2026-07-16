@@ -19,6 +19,7 @@ import { RELATIONSHIPS } from '@/data/relationships';
 export type TypeFilter = 'all' | 'original' | 'clone';
 export type MatchMode = 'exact' | 'partial';
 export type SortMode = 'relevance' | 'year' | 'name' | 'house';
+export type BrowseView = 'fan' | 'grid';
 
 export interface DiscoveryStore {
   // --- data (loaded once) ---
@@ -34,6 +35,8 @@ export interface DiscoveryStore {
   matchMode: MatchMode;
   linkClones: boolean;
   sortMode: SortMode;
+  /** null = device default (grid on mobile, fan on desktop) */
+  browseView: BrowseView | null;
 
   // --- view ---
   activeIndex: number;
@@ -52,6 +55,7 @@ export interface DiscoveryStore {
   setMatchMode(m: MatchMode): void;
   toggleLinkClones(): void;
   setSortMode(m: SortMode): void;
+  setBrowseView(v: BrowseView): void;
   setActiveIndex(i: number): void;
   next(): void;
   prev(): void;
@@ -77,6 +81,7 @@ export const useDiscovery = create<DiscoveryStore>((set) => ({
   matchMode: 'partial',
   linkClones: false,
   sortMode: 'relevance',
+  browseView: null,
 
   activeIndex: 0,
   hoveredPerfumeId: null,
@@ -105,6 +110,7 @@ export const useDiscovery = create<DiscoveryStore>((set) => ({
   setMatchMode: (m) => set({ matchMode: m, activeIndex: 0 }),
   toggleLinkClones: () => set((s) => ({ linkClones: !s.linkClones, activeIndex: 0 })),
   setSortMode: (m) => set({ sortMode: m, activeIndex: 0 }),
+  setBrowseView: (v) => set({ browseView: v }),
 
   setActiveIndex: (i) => set({ activeIndex: Math.max(0, i) }),
   next: () => set((s) => ({ activeIndex: s.activeIndex + 1 })),

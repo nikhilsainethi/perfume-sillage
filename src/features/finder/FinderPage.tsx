@@ -168,7 +168,7 @@ export function FinderPage() {
             transition={{ duration: 0.4, ease: ease.enter }}
             aria-label={current.title}
           >
-            <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-champagne">
+            <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-champagne-bright">
               {current.eyebrow}
             </span>
             <h1 className="mt-3 max-w-[18ch] font-display text-[clamp(30px,5.6vw,48px)] leading-[1.05] text-parchment">
@@ -226,7 +226,7 @@ export function FinderPage() {
             transition={{ duration: 0.55, ease: ease.enter }}
             aria-label="Your scents"
           >
-            <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-champagne">
+            <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-champagne-bright">
               The verdict
             </span>
             <h1 className="mt-3 max-w-[18ch] font-display text-[clamp(30px,5.6vw,48px)] leading-[1.05] text-parchment">
@@ -266,7 +266,7 @@ export function FinderPage() {
                     </ul>
                   </div>
                   <div className="flex shrink-0 items-center gap-4 sm:flex-col sm:items-end">
-                    <span className="font-display text-[34px] leading-none text-champagne">
+                    <span className="font-display text-[34px] leading-none text-champagne-bright">
                       {matchPct}
                       <span className="ml-0.5 font-sans text-[13px] text-muted">%</span>
                     </span>

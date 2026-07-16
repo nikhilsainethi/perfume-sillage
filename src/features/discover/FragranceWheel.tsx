@@ -190,7 +190,7 @@ export function FragranceWheel({
           </>
         ) : (
           <>
-            <span className="font-display text-[clamp(22px,5vw,32px)] leading-none text-champagne">
+            <span className="font-display text-[clamp(22px,5vw,32px)] leading-none text-champagne-bright">
               {selectedIds.length}
             </span>
             <span className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">

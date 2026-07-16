@@ -122,7 +122,12 @@ export function NotePicker({
           <FragranceWheel notes={wheelNotes} selectedIds={selectedIds} onToggle={onToggle} />
         ) : (
           <div className="scrollbar-thin max-h-[620px] overflow-y-auto pr-2">
-            <NoteSelector notes={notes} selectedIds={selectedIds} onToggle={onToggle} />
+            <NoteSelector
+              notes={notes}
+              selectedIds={selectedIds}
+              onToggle={onToggle}
+              collapsible={isMobile}
+            />
           </div>
         )}
       </motion.div>

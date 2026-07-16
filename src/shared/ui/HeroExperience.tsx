@@ -33,7 +33,7 @@ export function HeroExperience({ featured }: { featured: Perfume }) {
       <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1.15fr_0.85fr]">
         {/* editorial column */}
         <div className="flex flex-col gap-7">
-          <motion.span {...rise(0.1)} className="font-mono text-[12px] uppercase tracking-[0.32em] text-champagne">
+          <motion.span {...rise(0.1)} className="font-mono text-[12px] uppercase tracking-[0.32em] text-champagne-bright">
             An Atlas of Scent
           </motion.span>
 
@@ -60,23 +60,25 @@ export function HeroExperience({ featured }: { featured: Perfume }) {
             collection, and compare an original with its interpretation.
           </motion.p>
 
+          {/* explore first — a newcomer can't want to compose before they've
+              wandered; the Atelier is the second date, not the greeting */}
           <motion.div {...rise(0.55)} data-hero-cta className="flex flex-wrap items-center gap-4 pt-2">
-            <Link
-              to="/atelier"
-              className="group inline-flex items-center gap-2.5 rounded-chip bg-champagne px-6 py-3 font-sans text-[14px] font-medium text-ink outline-none transition-colors hover:bg-champagne-bright hover:text-white"
-            >
-              Compose your own scent
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden className="transition-transform group-hover:translate-x-0.5">
-                <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </Link>
             <button
               type="button"
               onClick={() => scrollToId('discover')}
-              className="rounded-chip border border-[var(--line)] px-6 py-3 font-sans text-[14px] text-parchment-dim outline-none transition-colors hover:border-champagne hover:text-champagne-bright"
+              className="group inline-flex items-center gap-2.5 rounded-chip bg-champagne px-6 py-3 font-sans text-[14px] font-medium text-ink outline-none transition-colors hover:bg-champagne-bright hover:text-white"
             >
               Explore the atlas
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden className="transition-transform group-hover:translate-y-0.5">
+                <path d="M12 5v14M6 13l6 6 6-6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
             </button>
+            <Link
+              to="/atelier"
+              className="rounded-chip border border-[var(--line)] px-6 py-3 font-sans text-[14px] text-parchment-dim outline-none transition-colors hover:border-champagne hover:text-champagne-bright"
+            >
+              Compose your own scent
+            </Link>
           </motion.div>
         </div>
 
@@ -104,8 +106,8 @@ export function HeroExperience({ featured }: { featured: Perfume }) {
                 background: `radial-gradient(circle, ${featured.accent ?? '#B0843C'}26, transparent 70%)`,
               }}
             />
-            {/* framed product photo */}
-            <div className="relative aspect-[4/5] w-[78%] overflow-hidden rounded-panel border border-[var(--line)] bg-white shadow-e2">
+            {/* framed product photo — warm canvas, never a cool studio slab */}
+            <div className="relative aspect-[4/5] w-[78%] overflow-hidden rounded-panel border border-[var(--line)] bg-[#F5EFE3] shadow-e2">
               <BottleVisual perfume={featured} variant="tile" />
             </div>
           </div>

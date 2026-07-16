@@ -166,15 +166,31 @@ export function BottleVisual({
   className?: string;
 }) {
   if (perfume.photo) {
+    // photos arrive with every studio background imaginable — mount them
+    // all on the same warm linen canvas with a faint champagne wash so
+    // they sit in the page's palette instead of punching cool holes in it
     return (
-      <img
-        src={perfume.photo}
-        alt={`${perfume.name} by ${perfume.brand}`}
-        draggable={false}
-        loading="lazy"
-        decoding="async"
-        className={`h-full w-full ${variant === 'thumb' ? 'object-contain' : 'object-cover'} ${className ?? ''}`}
-      />
+      <span
+        className={`relative block h-full w-full overflow-hidden bg-[#F5EFE3] ${className ?? ''}`}
+      >
+        <img
+          src={perfume.photo}
+          alt={`${perfume.name} by ${perfume.brand}`}
+          draggable={false}
+          loading="lazy"
+          decoding="async"
+          className={`h-full w-full object-contain ${variant === 'thumb' ? 'p-1.5' : 'p-3'}`}
+        />
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(160deg, rgba(176,132,60,0.10), rgba(176,132,60,0) 40%, rgba(122,101,60,0.08))',
+            mixBlendMode: 'multiply',
+          }}
+        />
+      </span>
     );
   }
   return (

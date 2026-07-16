@@ -9,11 +9,12 @@ import { useEffect, useRef } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import type { PanInfo } from 'framer-motion';
 import type { Perfume } from '@/domain/types';
-import { useDiscovery, type SortMode } from '@/store/discoveryStore';
+import { useDiscovery, type BrowseView, type SortMode } from '@/store/discoveryStore';
 import { useIsDesktop, useIsTablet } from '@/shared/hooks/useMediaQuery';
 import { PerfumeFanCard } from './PerfumeFanCard';
 import { CarouselControls } from './CarouselControls';
 import { CarouselEmptyState } from './CarouselEmptyState';
+import { BrowseGrid } from './BrowseGrid';
 
 const DRAG_THRESHOLD = 130; // px per index step
 
@@ -54,11 +55,18 @@ export function FanningCarousel({ perfumes }: { perfumes: Perfume[] }) {
     clearNotes();
   };
 
+  const browseView = useDiscovery((s) => s.browseView);
+  const setBrowseView = useDiscovery((s) => s.setBrowseView);
+
   const reduce = useReducedMotion() ?? false;
   const isDesktop = useIsDesktop();
   const isTablet = useIsTablet();
   const maxVisible = isDesktop ? 4 : isTablet ? 2 : 1;
   const variant: 'fan' | 'flat' = reduce || (!isDesktop && !isTablet) ? 'flat' : 'fan';
+
+  // the fan is theater, the grid is the library — phones get the library
+  const effectiveBrowseView: BrowseView =
+    browseView ?? (!isDesktop && !isTablet ? 'grid' : 'fan');
 
   const total = perfumes.length;
   const clamp = (i: number) => Math.max(0, Math.min(i, total - 1));
@@ -125,7 +133,7 @@ export function FanningCarousel({ perfumes }: { perfumes: Perfume[] }) {
     >
       <div className="mx-auto mb-2 flex max-w-[1180px] flex-wrap items-end justify-between gap-x-8 gap-y-4 px-5 sm:px-8">
         <div>
-          <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-champagne">
+          <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-champagne-bright">
             Act II — Browse
           </span>
           <h2 className="mt-3 max-w-[20ch] font-display text-[clamp(28px,5vw,46px)] leading-[1.07] text-parchment">
@@ -144,30 +152,67 @@ export function FanningCarousel({ perfumes }: { perfumes: Perfume[] }) {
             </button>
           )}
         </div>
-        <div
-          role="radiogroup"
-          aria-label="Sort order"
-          className="mb-1 flex items-center gap-1 rounded-full border border-[var(--line)] bg-[#FFFFFF] p-1"
-        >
-          {SORTS.map((s) => (
-            <button
-              key={s.value}
-              type="button"
-              role="radio"
-              aria-checked={sortMode === s.value}
-              onClick={() => setSortMode(s.value)}
-              className={`rounded-full px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] outline-none transition-colors ${
-                sortMode === s.value
-                  ? 'bg-champagne text-[#FFFDF8]'
-                  : 'text-parchment-dim hover:text-champagne-bright'
-              }`}
-            >
-              {s.label}
-            </button>
-          ))}
+        <div className="mb-1 flex flex-wrap items-center justify-end gap-2">
+          <div
+            role="radiogroup"
+            aria-label="Browse layout"
+            className="flex items-center gap-1 rounded-full border border-[var(--line)] bg-[#FFFFFF] p-1"
+          >
+            {(['fan', 'grid'] as BrowseView[]).map((v) => (
+              <button
+                key={v}
+                type="button"
+                role="radio"
+                aria-checked={effectiveBrowseView === v}
+                onClick={() => setBrowseView(v)}
+                className={`rounded-full px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] outline-none transition-colors ${
+                  effectiveBrowseView === v
+                    ? 'bg-champagne text-[#FFFDF8]'
+                    : 'text-parchment-dim hover:text-champagne-bright'
+                }`}
+              >
+                {v === 'fan' ? 'Fan' : 'Grid'}
+              </button>
+            ))}
+          </div>
+          <div
+            role="radiogroup"
+            aria-label="Sort order"
+            className="flex items-center gap-1 rounded-full border border-[var(--line)] bg-[#FFFFFF] p-1"
+          >
+            {SORTS.map((s) => (
+              <button
+                key={s.value}
+                type="button"
+                role="radio"
+                aria-checked={sortMode === s.value}
+                onClick={() => setSortMode(s.value)}
+                className={`rounded-full px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] outline-none transition-colors ${
+                  sortMode === s.value
+                    ? 'bg-champagne text-[#FFFDF8]'
+                    : 'text-parchment-dim hover:text-champagne-bright'
+                }`}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
+      {effectiveBrowseView === 'grid' ? (
+        total === 0 ? (
+          <div className="mx-auto grid min-h-[320px] max-w-[1180px] place-items-center px-5 sm:px-8">
+            <CarouselEmptyState
+              matchMode={matchMode}
+              onMatchAny={() => setMatchMode('partial')}
+              onClear={clearNotes}
+            />
+          </div>
+        ) : (
+          <BrowseGrid perfumes={perfumes} onOpen={openDetail} />
+        )
+      ) : (
       <div
         role="listbox"
         aria-label="Matching fragrances"
@@ -225,8 +270,9 @@ export function FanningCarousel({ perfumes }: { perfumes: Perfume[] }) {
           )}
         </AnimatePresence>
       </div>
+      )}
 
-      {total > 0 && (
+      {effectiveBrowseView === 'fan' && total > 0 && (
         <div className="mx-auto mt-2 max-w-[1180px] px-5 sm:px-8">
           <CarouselControls
             total={total}

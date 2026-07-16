@@ -143,7 +143,7 @@ export function CompositionPanel({ draftPerfume }: { draftPerfume: Perfume }) {
             }}
           >
             <div className="mb-2 flex items-baseline justify-between">
-              <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-champagne">
+              <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-champagne-bright">
                 {TIER_LABEL[tier]}
               </span>
               <span className="font-sans text-[11px] italic text-muted">{TIER_HINT[tier]}</span>

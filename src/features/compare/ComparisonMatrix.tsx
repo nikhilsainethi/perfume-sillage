@@ -27,7 +27,7 @@ function Panel({
 }) {
   return (
     <div className={`rounded-panel border border-[var(--line)] bg-smoke/60 p-6 sm:p-7 ${className ?? ''}`}>
-      <h3 className="mb-5 font-mono text-[11px] uppercase tracking-[0.18em] text-champagne">
+      <h3 className="mb-5 font-mono text-[11px] uppercase tracking-[0.18em] text-champagne-bright">
         {title}
       </h3>
       {children}
@@ -51,7 +51,7 @@ export function ComparisonMatrix() {
       className="mx-auto w-full max-w-[1180px] px-5 sm:px-8"
     >
       <header className="mb-9 flex flex-col gap-3">
-        <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-champagne">
+        <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-champagne-bright">
           Act III — Compare
         </span>
         <h2

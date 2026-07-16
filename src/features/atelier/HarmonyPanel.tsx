@@ -16,7 +16,7 @@ export function HarmonyPanel({ sparks, cautions }: { sparks: Spark[]; cautions: 
       className="rounded-panel border border-[var(--line)] bg-smoke/60 p-6 sm:p-7"
       aria-label="Harmony guidance"
     >
-      <h3 className="mb-4 font-mono text-[11px] uppercase tracking-[0.18em] text-champagne">
+      <h3 className="mb-4 font-mono text-[11px] uppercase tracking-[0.18em] text-champagne-bright">
         The perfumer&rsquo;s ear
       </h3>
       <ul className="flex flex-col gap-2.5">
@@ -31,7 +31,7 @@ export function HarmonyPanel({ sparks, cautions }: { sparks: Spark[]; cautions: 
               transition={{ duration: 0.35, ease: ease.enter }}
               className="flex items-start gap-2.5 font-sans text-[13.5px] leading-relaxed text-parchment-dim"
             >
-              <span aria-hidden className="mt-0.5 text-[13px] text-champagne">✦</span>
+              <span aria-hidden className="mt-0.5 text-[13px] text-champagne-bright">✦</span>
               <span>{s.message}</span>
             </motion.li>
           ))}

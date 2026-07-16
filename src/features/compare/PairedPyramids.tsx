@@ -89,7 +89,7 @@ export function PairedPyramids({ result }: { result: ComparisonResult }) {
 
       {/* shared-notes list — primary on mobile, also the a11y summary (§10.4) */}
       <div className={isMobile ? '' : 'sr-only'}>
-        <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.18em] text-champagne">
+        <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.18em] text-champagne-bright">
           {sharedNames.length} shared notes
         </p>
         <div className="flex flex-wrap gap-2">

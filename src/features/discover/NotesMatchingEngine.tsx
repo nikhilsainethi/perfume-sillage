@@ -50,9 +50,10 @@ export function NotesMatchingEngine() {
   const isMobile = useIsMobile();
   const canRender3D = useWebGLCapability();
   const [viewMode, setViewMode] = useState<ViewMode | null>(null);
-  const effectiveView: ViewMode = isMobile
-    ? 'cluster'
-    : viewMode ?? (canRender3D ? 'orbit' : 'wheel');
+  // The wheel is the DEFAULT: labeled, structured, legible at a glance.
+  // The 3D orbit is the showpiece you opt into — not the first thing a
+  // newcomer must decode (and its three.js chunk stays unloaded until asked).
+  const effectiveView: ViewMode = isMobile ? 'cluster' : viewMode ?? 'wheel';
   const viewOptions: ViewMode[] = canRender3D
     ? ['orbit', 'wheel', 'cluster']
     : ['wheel', 'cluster'];
@@ -72,7 +73,7 @@ export function NotesMatchingEngine() {
       className="mx-auto w-full max-w-[1180px] px-5 sm:px-8"
     >
       <header className="mb-10 flex flex-col gap-3">
-        <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-champagne">
+        <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-champagne-bright">
           Act I — Discover
         </span>
         <h2
@@ -169,6 +170,7 @@ export function NotesMatchingEngine() {
                 notes={NOTES_LIST}
                 selectedIds={selectedNoteIds}
                 onToggle={toggleNote}
+                collapsible={isMobile}
               />
             )}
           </motion.div>

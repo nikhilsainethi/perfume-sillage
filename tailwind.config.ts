@@ -11,7 +11,7 @@ export default {
         smoke: '#FFFFFF', // card fill
         ink: '#1B1611', // text on accent fills
         parchment: { DEFAULT: '#221C15', dim: '#6E6456' },
-        muted: '#9A9082',
+        muted: '#7A7061',
         champagne: { DEFAULT: '#B0843C', bright: '#8A6526' },
         amber: '#B0702F',
         rose: '#B5786E',

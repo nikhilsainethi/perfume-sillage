@@ -92,9 +92,11 @@ export function MatchResultsSummary({
             {total === 1 ? 'fragrance' : 'fragrances'}
           </span>
         </span>
-        <span className="flex items-baseline gap-1.5 font-mono text-[13px] text-champagne">
-          ·<AnimatedNumber value={exactCount} /> exact
-        </span>
+        {exactCount > 0 && (
+          <span className="flex items-baseline gap-1.5 font-mono text-[13px] text-champagne-bright">
+            ·<AnimatedNumber value={exactCount} /> exact
+          </span>
+        )}
       </div>
 
       <div className="flex flex-wrap items-center gap-x-6 gap-y-3">

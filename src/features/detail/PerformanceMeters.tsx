@@ -38,7 +38,7 @@ export function PerformanceMeters({ performance }: { performance: PerformancePro
                 />
               ))}
             </div>
-            <span className="w-7 shrink-0 text-right font-mono text-[12px] text-champagne">
+            <span className="w-7 shrink-0 text-right font-mono text-[12px] text-champagne-bright">
               {value}
             </span>
           </li>
